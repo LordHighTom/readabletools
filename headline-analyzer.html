@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Headline Analyzer — Free Blog Title Scorer</title>
+  <meta name="description" content="Score your blog post or article headline instantly. Free headline analyzer checks word balance, length, sentiment, and power words. No sign-up needed." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); text-decoration: none; }
+    .header-links { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .header-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .header-link:hover { color: var(--text); }
+    .header-cta { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .header-cta:hover { background: var(--surface); }
+
+    main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+    .hero { margin-bottom: 2rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 40px); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+    .hero h1 em { font-style: italic; }
+    .hero p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 520px; }
+
+    /* ── Input ── */
+    .input-wrap { position: relative; margin-bottom: 1rem; }
+    input[type="text"] {
+      width: 100%; font-family: 'DM Sans', sans-serif; font-size: 18px; font-weight: 500;
+      line-height: 1.4; padding: 16px 18px; border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg); background: var(--bg); color: var(--text);
+      transition: border-color 0.15s;
+    }
+    input[type="text"]:focus { outline: none; border-color: var(--text-secondary); }
+    input[type="text"]::placeholder { color: var(--text-tertiary); font-weight: 400; }
+    .char-count { text-align: right; font-size: 12px; color: var(--text-tertiary); margin-top: 6px; }
+    .char-count.warn { color: #EF9F27; }
+    .char-count.over { color: #E24B4A; }
+
+    /* ── Score circle ── */
+    .score-section { display: flex; align-items: center; gap: 2rem; margin: 1.5rem 0; background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem 2rem; flex-wrap: wrap; }
+    .score-circle { flex-shrink: 0; }
+    .score-circle svg { display: block; }
+    .score-text { flex: 1; min-width: 180px; }
+    .score-label { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 6px; }
+    .score-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+    .score-empty { font-size: 15px; color: var(--text-tertiary); font-style: italic; }
+
+    /* ── Check rows ── */
+    .checks { display: flex; flex-direction: column; gap: 10px; margin: 1.5rem 0; }
+    .check { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; background: var(--surface); border-radius: var(--radius-md); }
+    .check-icon { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-top: 1px; }
+    .check-icon.pass { background: #EAF3DE; color: #3B6D11; }
+    .check-icon.warn { background: #FAEEDA; color: #854F0B; }
+    .check-icon.fail { background: #FCEBEB; color: #A32D2D; }
+    .check-icon.neutral { background: var(--border); color: var(--text-secondary); }
+    .check-body { flex: 1; }
+    .check-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+    .check-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ── Power words ── */
+    .power-words { margin: 1.5rem 0; }
+    .power-words h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+    .word-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .word-tag { padding: 5px 12px; border-radius: 99px; font-size: 13px; font-weight: 500; }
+    .word-tag.power { background: #EAF3DE; color: #3B6D11; }
+    .word-tag.emotional { background: #E8F0FD; color: #2A52A0; }
+    .word-tag.common { background: var(--surface); color: var(--text-secondary); border: 1px solid var(--border); }
+    .no-power { font-size: 14px; color: var(--text-tertiary); font-style: italic; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    .footer-cta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .coffee-btn:hover { background: var(--surface); }
+
+    .ad-slot { margin-top: 2rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-tertiary); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+    footer a { color: inherit; }
+
+    @media (max-width: 520px) { main { padding: 2rem 1.25rem 3rem; } header { padding: 0 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <div class="header-links">
+        <a class="header-link" href="https://readabletools.com">All Tools</a>
+        
+        <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Write headlines that<br><em>actually get clicked</em></h1>
+      <p>Type or paste a headline to get an instant score, word balance breakdown, and tips to make it stronger.</p>
+    </div>
+
+    <div class="input-wrap">
+      <input type="text" id="hl-input" placeholder="Type your headline here…" oninput="analyze()" maxlength="200" aria-label="Headline to analyze" />
+      <div class="char-count" id="char-count">0 characters</div>
+    </div>
+
+    <div class="score-section" id="score-section">
+      <div class="score-circle">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" fill="none" stroke="var(--border)" stroke-width="7"/>
+          <circle id="score-ring" cx="45" cy="45" r="38" fill="none" stroke="#ccc" stroke-width="7"
+            stroke-dasharray="239" stroke-dashoffset="239"
+            stroke-linecap="round" transform="rotate(-90 45 45)"
+            style="transition: stroke-dashoffset 0.5s cubic-bezier(.4,0,.2,1), stroke 0.5s"/>
+          <text id="score-num" x="45" y="50" text-anchor="middle" font-family="DM Serif Display,serif" font-size="22" fill="var(--text)">—</text>
+        </svg>
+      </div>
+      <div class="score-text">
+        <div id="score-label" class="score-empty">Type a headline above to get your score</div>
+        <div id="score-sub" class="score-sub" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="checks" id="checks"></div>
+
+    <div class="power-words" id="power-section" style="display:none">
+      <h2>Word analysis</h2>
+      <div class="word-tags" id="word-tags"></div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <div class="ad-slot">Advertisement</div>
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free writing tools for bloggers, writers &amp; creators.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://readabletool.netlify.app">Readability Checker</a>
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://quickwordcount.netlify.app">Word Counter</a>
+  </footer>
+
+  <script>
+    const POWER_WORDS = ['amazing','proven','secret','free','best','worst','ultimate','essential','powerful','effortless','instantly','easy','simple','fast','quick','boost','explode','skyrocket','hack','trick','tip','strategy','mistake','truth','lie','shocking','surprising','unexpected','incredible','unbelievable','remarkable','extraordinary','guaranteed','exclusive','limited','urgent','now','today','discover','reveal','unlock','master','transform','change','improve','grow','save','win','avoid','stop','never','always','every','complete','perfect','exact','step-by-step','definitive'];
+
+    const EMOTIONAL_WORDS = ['love','hate','fear','anger','joy','sad','happy','worried','excited','frustrated','inspired','motivated','anxious','confident','proud','ashamed','jealous','grateful','lonely','hopeful','desperate','brave','afraid','nervous','thrilled'];
+
+    const COMMON_WORDS = ['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','is','are','was','were','be','been','have','has','had','do','does','did','will','would','could','should','may','might','how','why','what','when','where','who','which','that','this','these','those','your','our','my','their','its','you','we','i','it','he','she','they'];
+
+    function analyze() {
+      const raw = document.getElementById('hl-input').value;
+      const text = raw.trim();
+      const cc = document.getElementById('char-count');
+      cc.textContent = raw.length + ' characters';
+      cc.className = 'char-count' + (raw.length > 70 ? ' over' : raw.length > 55 ? ' warn' : '');
+
+      if (!text) { reset(); return; }
+
+      const words = text.toLowerCase().match(/\b[a-z']+\b/g) || [];
+      const wordCount = words.length;
+
+      // categorize
+      const powerFound = words.filter(w => POWER_WORDS.includes(w));
+      const emotionalFound = words.filter(w => EMOTIONAL_WORDS.includes(w));
+      const commonFound = words.filter(w => COMMON_WORDS.includes(w));
+      const uncommonFound = words.filter(w => !COMMON_WORDS.includes(w) && !POWER_WORDS.includes(w) && !EMOTIONAL_WORDS.includes(w));
+
+      // scoring
+      let score = 50;
+      // length sweet spot 6-10 words
+      if (wordCount >= 6 && wordCount <= 10) score += 15;
+      else if (wordCount >= 5 && wordCount <= 12) score += 8;
+      else if (wordCount < 4 || wordCount > 15) score -= 10;
+      // power words
+      if (powerFound.length >= 1) score += 10;
+      if (powerFound.length >= 2) score += 5;
+      // emotional words
+      if (emotionalFound.length >= 1) score += 8;
+      // character length
+      if (raw.length >= 40 && raw.length <= 60) score += 10;
+      else if (raw.length > 70) score -= 8;
+      // numbers
+      if (/\d/.test(text)) score += 7;
+      // starts with number or power word
+      if (/^\d/.test(text)) score += 5;
+      // has a colon or hyphen (structure)
+      if (/:|-|–/.test(text)) score += 5;
+      // uncommon words ratio (specificity)
+      const uncommonRatio = uncommonFound.length / Math.max(wordCount, 1);
+      if (uncommonRatio > 0.4) score += 5;
+
+      score = Math.min(100, Math.max(1, Math.round(score)));
+
+      // render score
+      const { label, sub, color } = scoreInfo(score);
+      const circumference = 239;
+      const offset = circumference - (score / 100) * circumference;
+      document.getElementById('score-ring').style.strokeDashoffset = offset;
+      document.getElementById('score-ring').style.stroke = color;
+      document.getElementById('score-num').textContent = score;
+      document.getElementById('score-label').textContent = label;
+      document.getElementById('score-label').className = 'score-label';
+      const sub_el = document.getElementById('score-sub');
+      sub_el.textContent = sub;
+      sub_el.style.display = 'block';
+
+      // checks
+      const checks = [
+        checkLength(wordCount),
+        checkChars(raw.length),
+        checkPowerWords(powerFound.length),
+        checkNumbers(text),
+        checkSentiment(emotionalFound.length),
+        checkStructure(text),
+      ];
+      document.getElementById('checks').innerHTML = checks.map(c => `
+        <div class="check">
+          <div class="check-icon ${c.status}">${c.status === 'pass' ? '✓' : c.status === 'warn' ? '!' : c.status === 'fail' ? '✕' : '·'}</div>
+          <div class="check-body">
+            <div class="check-title">${c.title}</div>
+            <div class="check-desc">${c.desc}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // word tags
+      const allWords = text.match(/\b[a-zA-Z']+\b/g) || [];
+      if (allWords.length > 0) {
+        document.getElementById('power-section').style.display = 'block';
+        document.getElementById('word-tags').innerHTML = allWords.map(w => {
+          const lw = w.toLowerCase();
+          const cls = POWER_WORDS.includes(lw) ? 'power' : EMOTIONAL_WORDS.includes(lw) ? 'emotional' : 'common';
+          return `<span class="word-tag ${cls}">${w}</span>`;
+        }).join('');
+      }
+    }
+
+    function scoreInfo(score) {
+      if (score >= 80) return { label: 'Great headline!', sub: 'This headline has strong click potential. It\'s well-balanced and engaging.', color: '#97C459' };
+      if (score >= 65) return { label: 'Good headline', sub: 'Solid headline. A few small tweaks could make it even stronger.', color: '#6BAF3C' };
+      if (score >= 50) return { label: 'Average headline', sub: 'This headline is okay but won\'t stand out. Try adding a number or a power word.', color: '#EF9F27' };
+      if (score >= 35) return { label: 'Needs work', sub: 'This headline may get overlooked. Consider making it more specific or emotional.', color: '#E07A1A' };
+      return { label: 'Weak headline', sub: 'This headline is unlikely to get clicks. Try a different approach — add specifics, numbers, or emotion.', color: '#E24B4A' };
+    }
+
+    function checkLength(wc) {
+      if (wc >= 6 && wc <= 10) return { status: 'pass', title: 'Word count: ' + wc + ' words', desc: 'Great length. 6–10 words is the sweet spot for headlines.' };
+      if (wc >= 5 && wc <= 12) return { status: 'warn', title: 'Word count: ' + wc + ' words', desc: 'Acceptable length, but 6–10 words tends to perform best.' };
+      if (wc < 4) return { status: 'fail', title: 'Word count: ' + wc + ' words', desc: 'Too short. Add more detail to make it specific and clickable.' };
+      return { status: 'fail', title: 'Word count: ' + wc + ' words', desc: 'Too long. Try trimming to under 12 words for better impact.' };
+    }
+
+    function checkChars(len) {
+      if (len >= 40 && len <= 60) return { status: 'pass', title: 'Character length: ' + len, desc: 'Perfect for SEO. Google shows up to ~60 characters in search results.' };
+      if (len < 40) return { status: 'warn', title: 'Character length: ' + len, desc: 'A bit short for SEO. You have room to add more detail.' };
+      if (len <= 70) return { status: 'warn', title: 'Character length: ' + len, desc: 'Slightly long. Google may truncate this in search results.' };
+      return { status: 'fail', title: 'Character length: ' + len, desc: 'Too long for SEO. Google will cut this off in search results at ~60 characters.' };
+    }
+
+    function checkPowerWords(count) {
+      if (count >= 2) return { status: 'pass', title: 'Power words: ' + count + ' found', desc: 'Great use of power words. They boost emotional engagement and clicks.' };
+      if (count === 1) return { status: 'warn', title: 'Power word: 1 found', desc: 'Good start. Try adding one more power word to increase impact.' };
+      return { status: 'fail', title: 'No power words found', desc: 'Add a power word like "proven", "ultimate", "secret", or a number to boost clicks.' };
+    }
+
+    function checkNumbers(text) {
+      if (/\d/.test(text)) return { status: 'pass', title: 'Contains a number', desc: 'Numbers in headlines increase click-through rates significantly.' };
+      return { status: 'warn', title: 'No numbers', desc: 'Consider adding a number (e.g. "7 Ways to…" or "The 3-Step…"). Numbers attract attention.' };
+    }
+
+    function checkSentiment(count) {
+      if (count >= 1) return { status: 'pass', title: 'Emotional language detected', desc: 'Emotional words connect with readers and make headlines more compelling.' };
+      return { status: 'neutral', title: 'No emotional words', desc: 'Consider adding an emotional word to create a stronger connection with the reader.' };
+    }
+
+    function checkStructure(text) {
+      if (/:|-|–/.test(text)) return { status: 'pass', title: 'Good structure', desc: 'Using a colon or dash gives your headline a clear, professional structure.' };
+      if (/^(how|why|what|when|where|who)/i.test(text)) return { status: 'pass', title: 'Question format', desc: 'Starting with a question word is a proven headline structure.' };
+      return { status: 'neutral', title: 'No special structure', desc: 'Try starting with a number, "How to", "Why", or adding a colon for stronger structure.' };
+    }
+
+    function reset() {
+      document.getElementById('score-ring').style.strokeDashoffset = 239;
+      document.getElementById('score-ring').style.stroke = '#ccc';
+      document.getElementById('score-num').textContent = '—';
+      document.getElementById('score-label').className = 'score-empty';
+      document.getElementById('score-label').textContent = 'Type a headline above to get your score';
+      document.getElementById('score-sub').style.display = 'none';
+      document.getElementById('checks').innerHTML = '';
+      document.getElementById('power-section').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>

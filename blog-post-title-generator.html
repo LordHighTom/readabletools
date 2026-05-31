@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Post Title Generator — Free Headline Ideas Tool</title>
+  <meta name="description" content="Generate dozens of blog post title ideas instantly. Free blog title generator uses proven headline formulas for any topic. No sign-up needed." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); text-decoration: none; }
+    .header-links { display: flex; align-items: center; gap: 12px; }
+    .header-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .header-link:hover { color: var(--text); }
+    .header-cta { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .header-cta:hover { background: var(--surface); }
+
+    main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+    .hero { margin-bottom: 2rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 40px); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+    .hero h1 em { font-style: italic; }
+    .hero p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 520px; }
+
+    /* ── Input area ── */
+    .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    input[type="text"] { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 12px 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--bg); color: var(--text); transition: border-color 0.15s; }
+    input[type="text"]:focus { outline: none; border-color: var(--text-secondary); }
+    input[type="text"]::placeholder { color: var(--text-tertiary); }
+    .generate-btn { padding: 12px 24px; border-radius: var(--radius-md); border: none; background: var(--text); color: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
+    .generate-btn:hover { opacity: 0.85; }
+
+    /* ── Category filters ── */
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+    .filter-btn { padding: 6px 14px; border-radius: 99px; font-size: 13px; font-weight: 500; border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+    .filter-btn:hover { background: var(--surface); color: var(--text); }
+    .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+    /* ── Results ── */
+    .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .results-count { font-size: 14px; color: var(--text-secondary); }
+    .regenerate-btn { padding: 6px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
+    .regenerate-btn:hover { background: var(--surface); color: var(--text); }
+
+    .title-grid { display: flex; flex-direction: column; gap: 8px; }
+    .title-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface); border-radius: var(--radius-md); transition: background 0.15s; }
+    .title-card:hover { background: var(--border); }
+    .title-category { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-tertiary); width: 80px; flex-shrink: 0; }
+    .title-text { flex: 1; font-size: 15px; line-height: 1.4; }
+    .copy-btn { padding: 5px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+    .copy-btn:hover { background: var(--bg); color: var(--text); }
+    .copy-btn.copied { color: #3B6D11; border-color: #97C459; }
+
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-tertiary); font-size: 15px; font-style: italic; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    .footer-cta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .coffee-btn:hover { background: var(--surface); }
+
+    .ad-slot { margin-top: 2rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-tertiary); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+    footer a { color: inherit; }
+
+    @media (max-width: 520px) { main { padding: 2rem 1.25rem 3rem; } header { padding: 0 1.25rem; } .input-row { flex-direction: column; } .title-category { display: none; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <div class="header-links">
+        <a class="header-link" href="https://readabletools.com">All Tools</a>
+        
+        <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Generate blog post<br><em>title ideas</em></h1>
+      <p>Enter your topic and instantly get dozens of proven headline ideas — listicles, how-tos, questions, controversials, and more.</p>
+    </div>
+
+    <div class="input-row">
+      <input type="text" id="topic-input" placeholder="e.g. content marketing, healthy eating, personal finance…" onkeydown="if(event.key==='Enter')generate()" aria-label="Blog topic" />
+      <button class="generate-btn" onclick="generate()">Generate titles</button>
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="filter-btn active" onclick="filterBy('all', this)">All</button>
+      <button class="filter-btn" onclick="filterBy('listicle', this)">Listicles</button>
+      <button class="filter-btn" onclick="filterBy('how-to', this)">How-to</button>
+      <button class="filter-btn" onclick="filterBy('question', this)">Questions</button>
+      <button class="filter-btn" onclick="filterBy('controversial', this)">Controversial</button>
+      <button class="filter-btn" onclick="filterBy('beginner', this)">Beginner</button>
+      <button class="filter-btn" onclick="filterBy('advanced', this)">Advanced</button>
+      <button class="filter-btn" onclick="filterBy('emotional', this)">Emotional</button>
+    </div>
+
+    <div id="results-area">
+      <div class="empty-state">Enter a topic above and click Generate to get title ideas</div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <div class="ad-slot">Advertisement</div>
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free writing tools for bloggers, writers &amp; creators.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://readabletool.netlify.app">Readability Checker</a>
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://quickwordcount.netlify.app">Word Counter</a>
+  </footer>
+
+  <script>
+    const TEMPLATES = [
+      // Listicles
+      { cat: 'listicle', t: n => `${n} Proven Ways to Master {topic}` },
+      { cat: 'listicle', t: n => `${n} Things Nobody Tells You About {topic}` },
+      { cat: 'listicle', t: n => `${n} {topic} Mistakes You're Probably Making` },
+      { cat: 'listicle', t: n => `${n} {topic} Tips That Actually Work` },
+      { cat: 'listicle', t: n => `${n} Reasons Why {topic} Matters More Than You Think` },
+      { cat: 'listicle', t: n => `${n} {topic} Strategies for Immediate Results` },
+      { cat: 'listicle', t: n => `${n} Simple {topic} Hacks That Save Time` },
+      { cat: 'listicle', t: n => `${n} {topic} Lessons I Wish I'd Learned Sooner` },
+      { cat: 'listicle', t: n => `${n} Signs You're Doing {topic} Wrong` },
+      { cat: 'listicle', t: n => `${n} {topic} Tools Every Pro Uses` },
+      { cat: 'listicle', t: n => `${n} Ways {topic} Will Change Your Life` },
+      { cat: 'listicle', t: n => `${n} {topic} Secrets the Experts Won't Share` },
+      // How-to
+      { cat: 'how-to', t: () => `How to Get Started With {topic} (Even If You're a Complete Beginner)` },
+      { cat: 'how-to', t: () => `How to Master {topic} in 30 Days` },
+      { cat: 'how-to', t: () => `How to Use {topic} to Grow Your Business` },
+      { cat: 'how-to', t: () => `How to Stop Wasting Time on {topic}` },
+      { cat: 'how-to', t: () => `How to Make the Most of {topic} Without Burning Out` },
+      { cat: 'how-to', t: () => `How to Build a {topic} Strategy From Scratch` },
+      { cat: 'how-to', t: () => `How to Turn Your {topic} Into a Side Income` },
+      { cat: 'how-to', t: () => `How to Fix Your {topic} Once and For All` },
+      { cat: 'how-to', t: () => `How to Stay Consistent With {topic}` },
+      { cat: 'how-to', t: () => `How to Get Better at {topic} Fast` },
+      { cat: 'how-to', t: () => `A Step-by-Step Guide to {topic} for Beginners` },
+      { cat: 'how-to', t: () => `The Right Way to Approach {topic} (Most People Get This Wrong)` },
+      // Questions
+      { cat: 'question', t: () => `Is {topic} Really Worth Your Time?` },
+      { cat: 'question', t: () => `What Nobody Tells You About {topic}` },
+      { cat: 'question', t: () => `Why Is {topic} So Hard — And What Can You Do About It?` },
+      { cat: 'question', t: () => `Are You Making These Common {topic} Mistakes?` },
+      { cat: 'question', t: () => `What Does It Really Take to Succeed at {topic}?` },
+      { cat: 'question', t: () => `Is Your {topic} Strategy Actually Working?` },
+      { cat: 'question', t: () => `Why Does {topic} Feel So Overwhelming?` },
+      { cat: 'question', t: () => `Could {topic} Be the Answer You've Been Looking For?` },
+      { cat: 'question', t: () => `What's the Best Way to Learn {topic} in {year}?` },
+      // Controversial
+      { cat: 'controversial', t: () => `Why {topic} Is Overrated (And What to Do Instead)` },
+      { cat: 'controversial', t: () => `The Dark Side of {topic} Nobody Talks About` },
+      { cat: 'controversial', t: () => `Stop Believing These {topic} Myths` },
+      { cat: 'controversial', t: () => `The Uncomfortable Truth About {topic}` },
+      { cat: 'controversial', t: () => `Why Everything You Know About {topic} Is Wrong` },
+      { cat: 'controversial', t: () => `I Tried {topic} for 30 Days — Here's What Happened` },
+      { cat: 'controversial', t: () => `The {topic} Advice That's Holding You Back` },
+      { cat: 'controversial', t: () => `Why Most {topic} Advice Is Terrible` },
+      // Beginner
+      { cat: 'beginner', t: () => `{topic} for Beginners: Everything You Need to Know` },
+      { cat: 'beginner', t: () => `The Beginner's Complete Guide to {topic}` },
+      { cat: 'beginner', t: () => `{topic} 101: A Plain-English Introduction` },
+      { cat: 'beginner', t: () => `Getting Started With {topic}: A No-Fluff Guide` },
+      { cat: 'beginner', t: () => `What Is {topic}? A Simple Guide for Beginners` },
+      { cat: 'beginner', t: () => `The Easiest Way to Get Started With {topic}` },
+      { cat: 'beginner', t: () => `{topic} Made Simple: A Beginner's Roadmap` },
+      // Advanced
+      { cat: 'advanced', t: () => `Advanced {topic} Strategies for Experienced Practitioners` },
+      { cat: 'advanced', t: () => `Taking Your {topic} to the Next Level` },
+      { cat: 'advanced', t: () => `The Expert's Playbook for {topic}` },
+      { cat: 'advanced', t: () => `Mastering {topic}: Advanced Techniques That Get Results` },
+      { cat: 'advanced', t: () => `Beyond the Basics: Advanced {topic} for Serious Practitioners` },
+      { cat: 'advanced', t: () => `The {topic} Framework Used by Industry Leaders` },
+      // Emotional
+      { cat: 'emotional', t: () => `How {topic} Changed My Life (And How It Can Change Yours)` },
+      { cat: 'emotional', t: () => `The Honest Truth About Struggling With {topic}` },
+      { cat: 'emotional', t: () => `Why I Almost Gave Up on {topic} — And Why I'm Glad I Didn't` },
+      { cat: 'emotional', t: () => `What {topic} Taught Me About Myself` },
+      { cat: 'emotional', t: () => `The {topic} Moment That Changed Everything` },
+      { cat: 'emotional', t: () => `If You're Feeling Lost About {topic}, Read This` },
+      { cat: 'emotional', t: () => `My Biggest {topic} Failure — And What I Learned From It` },
+    ];
+
+    const NUMBERS = [5, 7, 9, 10, 11, 12, 15, 17, 21];
+    let allTitles = [];
+    let activeFilter = 'all';
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function generate() {
+      const raw = document.getElementById('topic-input').value.trim();
+      if (!raw) { alert('Please enter a topic first!'); return; }
+      const topic = capitalize(raw);
+      const year = new Date().getFullYear();
+
+      allTitles = TEMPLATES.map(({ cat, t }) => {
+        const n = NUMBERS[Math.floor(Math.random() * NUMBERS.length)];
+        return {
+          cat,
+          title: t(n).replace(/\{topic\}/g, topic).replace(/\{year\}/g, year)
+        };
+      });
+
+      // shuffle
+      for (let i = allTitles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allTitles[i], allTitles[j]] = [allTitles[j], allTitles[i]];
+      }
+
+      renderTitles();
+    }
+
+    function filterBy(cat, btn) {
+      activeFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTitles();
+    }
+
+    function renderTitles() {
+      const filtered = activeFilter === 'all' ? allTitles : allTitles.filter(t => t.cat === activeFilter);
+
+      if (filtered.length === 0) {
+        document.getElementById('results-area').innerHTML = '<div class="empty-state">No titles in this category yet. Try generating again!</div>';
+        return;
+      }
+
+      const catLabels = { listicle: 'Listicle', 'how-to': 'How-to', question: 'Question', controversial: 'Edgy', beginner: 'Beginner', advanced: 'Advanced', emotional: 'Emotional' };
+
+      document.getElementById('results-area').innerHTML = `
+        <div class="results-header">
+          <span class="results-count">${filtered.length} title ideas</span>
+          <button class="regenerate-btn" onclick="generate()">↻ Regenerate</button>
+        </div>
+        <div class="title-grid">
+          ${filtered.map((item, i) => `
+            <div class="title-card">
+              <span class="title-category">${catLabels[item.cat] || item.cat}</span>
+              <span class="title-text">${item.title}</span>
+              <button class="copy-btn" onclick="copyTitle(this, '${item.title.replace(/'/g, "\\'")}')" >Copy</button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function copyTitle(btn, title) {
+      navigator.clipboard.writeText(title).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>

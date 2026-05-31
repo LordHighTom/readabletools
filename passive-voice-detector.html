@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Passive Voice Detector — Free Writing Tool</title>
+  <meta name="description" content="Instantly detect passive voice in your writing. Free passive voice checker highlights every passive sentence and shows you how to make your writing stronger. No sign-up needed." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); text-decoration: none; }
+    .header-links { display: flex; align-items: center; gap: 12px; }
+    .header-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .header-link:hover { color: var(--text); }
+    .header-cta { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .header-cta:hover { background: var(--surface); }
+
+    main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+    .hero { margin-bottom: 2rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 40px); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+    .hero h1 em { font-style: italic; }
+    .hero p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 520px; }
+
+    textarea { width: 100%; min-height: 200px; resize: vertical; font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.65; padding: 16px 18px; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--bg); color: var(--text); transition: border-color 0.15s; display: block; }
+    textarea:focus { outline: none; border-color: var(--text-secondary); }
+    textarea::placeholder { color: var(--text-tertiary); }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 1.5rem 0; }
+    .stat { background: var(--surface); border-radius: var(--radius-md); padding: 16px 18px; }
+    .stat-val { font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 5px; }
+    .stat-lbl { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Score bar ── */
+    .score-bar { margin: 1.5rem 0; }
+    .score-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .score-title { font-size: 15px; font-weight: 500; }
+    .score-label { font-size: 13px; color: var(--text-secondary); }
+    .track { height: 8px; background: var(--surface); border-radius: 99px; overflow: hidden; }
+    .fill { height: 100%; border-radius: 99px; transition: width 0.4s cubic-bezier(.4,0,.2,1), background 0.4s; }
+    .score-tip { font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; }
+
+    /* ── Highlighted output ── */
+    .output { margin: 1.5rem 0; }
+    .output h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .output-text { font-size: 15px; line-height: 2; padding: 20px; background: var(--surface); border-radius: var(--radius-lg); }
+    .passive { background: rgba(226, 75, 74, 0.15); border-bottom: 2px solid #E24B4A; border-radius: 2px; cursor: help; }
+    .passive-word { background: rgba(226, 75, 74, 0.3); border-radius: 2px; padding: 0 2px; font-weight: 500; }
+
+    /* ── Passive list ── */
+    .passive-list { margin: 1.5rem 0; }
+    .passive-list h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .passive-item { padding: 14px 16px; background: var(--surface); border-radius: var(--radius-md); margin-bottom: 8px; border-left: 3px solid #E24B4A; }
+    .passive-item-text { font-size: 14px; line-height: 1.6; margin-bottom: 6px; }
+    .passive-item-hint { font-size: 12px; color: var(--text-secondary); }
+
+    /* ── Explainer ── */
+    .explainer { margin: 1.5rem 0; padding: 1.25rem 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .explainer h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .example-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 500px) { .example-row { grid-template-columns: 1fr; } }
+    .example-card { padding: 12px 14px; border-radius: var(--radius-md); font-size: 13px; line-height: 1.6; }
+    .example-card.bad { background: rgba(226, 75, 74, 0.08); border: 1px solid rgba(226, 75, 74, 0.2); }
+    .example-card.good { background: rgba(151, 196, 89, 0.1); border: 1px solid rgba(151, 196, 89, 0.3); }
+    .example-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .example-card.bad .example-label { color: #A32D2D; }
+    .example-card.good .example-label { color: #3B6D11; }
+
+    .empty-state { font-size: 14px; color: var(--text-tertiary); font-style: italic; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    .footer-cta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .coffee-btn:hover { background: var(--surface); }
+
+    .ad-slot { margin-top: 2rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-tertiary); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+    footer a { color: inherit; }
+
+    @media (max-width: 520px) { main { padding: 2rem 1.25rem 3rem; } header { padding: 0 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <div class="header-links">
+        <a class="header-link" href="https://readabletools.com">All Tools</a>
+        
+        <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Find passive voice<br><em>in your writing</em></h1>
+      <p>Paste any text to instantly highlight passive voice sentences. Active writing is clearer, stronger, and more engaging.</p>
+    </div>
+
+    <textarea id="pv-input" placeholder="Paste your text here…" oninput="analyze()" aria-label="Text to analyze"></textarea>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="s-sentences">—</div><div class="stat-lbl">Sentences</div></div>
+      <div class="stat"><div class="stat-val" id="s-passive">—</div><div class="stat-lbl">Passive sentences</div></div>
+      <div class="stat"><div class="stat-val" id="s-pct">—</div><div class="stat-lbl">Passive %</div></div>
+      <div class="stat"><div class="stat-val" id="s-active">—</div><div class="stat-lbl">Active sentences</div></div>
+    </div>
+
+    <div class="score-bar">
+      <div class="score-header">
+        <span class="score-title">Passive voice usage</span>
+        <span class="score-label" id="score-label">Paste text to analyze</span>
+      </div>
+      <div class="track"><div class="fill" id="score-fill" style="width:0%"></div></div>
+      <div class="score-tip" id="score-tip"></div>
+    </div>
+
+    <div class="output" id="output-section" style="display:none">
+      <h2>Highlighted text</h2>
+      <div class="output-text" id="output-text"></div>
+    </div>
+
+    <div class="passive-list" id="passive-list-section" style="display:none">
+      <h2>Passive sentences</h2>
+      <div id="passive-list"></div>
+    </div>
+
+    <div class="explainer">
+      <h2>Active vs passive voice</h2>
+      <div class="example-row">
+        <div class="example-card bad">
+          <div class="example-label">❌ Passive</div>
+          "The report <strong>was written</strong> by Sarah."<br>
+          "Mistakes <strong>were made</strong> during the project."<br>
+          "The ball <strong>was kicked</strong> by the player."
+        </div>
+        <div class="example-card good">
+          <div class="example-label">✓ Active</div>
+          "Sarah <strong>wrote</strong> the report."<br>
+          "The team <strong>made</strong> mistakes during the project."<br>
+          "The player <strong>kicked</strong> the ball."
+        </div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <div class="ad-slot">Advertisement</div>
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free writing tools for bloggers, writers &amp; creators.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://readabletool.netlify.app">Readability Checker</a>
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://quickwordcount.netlify.app">Word Counter</a>
+  </footer>
+
+  <script>
+    const BE_VERBS = ['am','is','are','was','were','be','been','being'];
+    const PAST_PARTICIPLE_PATTERN = /\b(am|is|are|was|were|be|been|being)\s+([\w]+ed|awoken|been|begun|bitten|blown|broken|brought|built|burned|bought|caught|chosen|come|cost|cut|dealt|done|drawn|driven|eaten|fallen|felt|found|flown|forgotten|frozen|given|gone|gotten|grown|heard|held|hidden|hit|hurt|kept|known|laid|led|left|lent|let|lain|lost|made|meant|met|paid|put|quit|read|ridden|rung|risen|run|said|seen|sent|set|shown|shut|sung|sunk|sat|slept|spoken|spent|stood|stolen|struck|sworn|swept|taken|taught|told|thought|thrown|understood|woken|worn|won|written|withdrawn)\b/i;
+
+    function getSentences(text) {
+      return text.split(/(?<=[.!?])\s+(?=[A-Z"'])|(?<=[.!?])$/)
+        .map(s => s.trim())
+        .filter(s => s.length > 1 && s.match(/\w/));
+    }
+
+    function isPassive(sentence) {
+      return PAST_PARTICIPLE_PATTERN.test(sentence);
+    }
+
+    function highlightPassive(sentence) {
+      return sentence.replace(PAST_PARTICIPLE_PATTERN, (match, beVerb, participle) =>
+        `<span class="passive-word">${beVerb}</span> <span class="passive-word">${participle}</span>`
+      );
+    }
+
+    function analyze() {
+      const text = document.getElementById('pv-input').value.trim();
+
+      if (!text) {
+        document.getElementById('s-sentences').textContent = '—';
+        document.getElementById('s-passive').textContent = '—';
+        document.getElementById('s-pct').textContent = '—';
+        document.getElementById('s-active').textContent = '—';
+        document.getElementById('score-label').textContent = 'Paste text to analyze';
+        document.getElementById('score-fill').style.width = '0%';
+        document.getElementById('score-tip').textContent = '';
+        document.getElementById('output-section').style.display = 'none';
+        document.getElementById('passive-list-section').style.display = 'none';
+        return;
+      }
+
+      const sentences = getSentences(text);
+      const total = sentences.length;
+      const passiveSentences = sentences.filter(isPassive);
+      const passiveCount = passiveSentences.length;
+      const activeCount = total - passiveCount;
+      const pct = total > 0 ? Math.round((passiveCount / total) * 100) : 0;
+
+      document.getElementById('s-sentences').textContent = total;
+      document.getElementById('s-passive').textContent = passiveCount;
+      document.getElementById('s-pct').textContent = pct + '%';
+      document.getElementById('s-active').textContent = activeCount;
+
+      const fill = document.getElementById('score-fill');
+      fill.style.width = pct + '%';
+      fill.style.background = pct <= 10 ? '#97C459' : pct <= 20 ? '#EF9F27' : '#E24B4A';
+      document.getElementById('score-label').textContent = pct + '% passive';
+
+      let tip = '';
+      if (pct === 0) tip = 'Excellent! No passive voice detected. Your writing is clear and direct.';
+      else if (pct <= 10) tip = 'Great job. Under 10% passive voice is the goal for most writing styles.';
+      else if (pct <= 20) tip = 'Acceptable, but try to reduce passive voice further. Aim for under 10%.';
+      else tip = 'High passive voice usage. Consider rewriting flagged sentences to be more direct and engaging.';
+      document.getElementById('score-tip').textContent = tip;
+
+      // highlighted output
+      document.getElementById('output-section').style.display = 'block';
+      document.getElementById('output-text').innerHTML = sentences.map(s => {
+        if (isPassive(s)) {
+          return `<span class="passive" title="Passive voice detected">${highlightPassive(s)}</span> `;
+        }
+        return s + ' ';
+      }).join('');
+
+      // passive list
+      if (passiveSentences.length > 0) {
+        document.getElementById('passive-list-section').style.display = 'block';
+        document.getElementById('passive-list').innerHTML = passiveSentences.map(s => `
+          <div class="passive-item">
+            <div class="passive-item-text">${highlightPassive(s)}</div>
+            <div class="passive-item-hint">Try rewriting this sentence so the subject performs the action directly.</div>
+          </div>
+        `).join('');
+      } else {
+        document.getElementById('passive-list-section').style.display = 'none';
+      }
+    }
+  </script>
+
+</body>
+</html>

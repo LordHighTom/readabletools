@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Readability Estimator — Free Reading Time & Score Checker</title>
+  <meta name="description" content="Paste any text to instantly get reading time, word count, sentence stats, and a Flesch readability score. Free, no sign-up needed." />
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+    }
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-strong);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      background: transparent;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .header-cta:hover { background: var(--surface); }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+    }
+
+    /* ── Hero ── */
+    .hero { margin-bottom: 2rem; }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .hero h1 em { font-style: italic; }
+    .hero p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    /* ── Textarea ── */
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      resize: vertical;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      padding: 16px 18px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color 0.15s;
+      display: block;
+    }
+    textarea:focus { outline: none; border-color: var(--text-secondary); }
+    textarea::placeholder { color: var(--text-tertiary); }
+
+    /* ── Stat cards ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin: 1.5rem 0;
+    }
+    .stat {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+    }
+    .stat-val {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+    .stat-lbl {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Readability bar ── */
+    .readability { margin: 1.5rem 0; }
+    .readability-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .readability-title { font-size: 15px; font-weight: 500; }
+    .readability-score { font-size: 13px; color: var(--text-secondary); }
+    .track {
+      height: 8px;
+      background: var(--surface);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.4s cubic-bezier(.4,0,.2,1), background 0.4s;
+      width: 0%;
+      background: #B5D4F4;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .badge.easy   { background: #EAF3DE; color: #3B6D11; }
+    .badge.medium { background: #FAEEDA; color: #854F0B; }
+    .badge.hard   { background: #FCEBEB; color: #A32D2D; }
+    .badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ── Explainer ── */
+    .explainer {
+      margin: 2rem 0;
+      padding: 1.25rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .explainer h2 {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    .score-rows { display: flex; flex-direction: column; gap: 6px; }
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .score-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+
+    /* ── Divider ── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    /* ── Footer CTA ── */
+    .footer-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-strong);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      background: transparent;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .coffee-btn:hover { background: var(--surface); }
+
+    /* ── Ad slot ── */
+    .ad-slot {
+      margin-top: 2rem;
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text-tertiary);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Site footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    @media (max-width: 520px) {
+      main { padding: 2rem 1.25rem 3rem; }
+      header { padding: 0 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">
+        ☕ Support this tool
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>How readable is<br><em>your writing?</em></h1>
+      <p>Paste any text — article, email, blog post, essay — and get an instant readability score, reading time, and key writing stats.</p>
+    </div>
+
+    <textarea id="rt-input" placeholder="Paste your text here…" oninput="analyze()" aria-label="Text to analyze"></textarea>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="s-time">—</div><div class="stat-lbl">Read time</div></div>
+      <div class="stat"><div class="stat-val" id="s-words">—</div><div class="stat-lbl">Words</div></div>
+      <div class="stat"><div class="stat-val" id="s-sents">—</div><div class="stat-lbl">Sentences</div></div>
+      <div class="stat"><div class="stat-val" id="s-wps">—</div><div class="stat-lbl">Avg words / sentence</div></div>
+    </div>
+
+    <div class="readability">
+      <div class="readability-header">
+        <span class="readability-title">Flesch readability score</span>
+        <span class="readability-score" id="grade-score">Paste text above to analyze</span>
+      </div>
+      <div class="track"><div class="fill" id="rt-fill"></div></div>
+      <div id="rt-badge"></div>
+    </div>
+
+    <div class="explainer">
+      <h2>Score guide</h2>
+      <div class="score-rows">
+        <div class="score-row"><div class="score-dot" style="background:#97C459"></div><strong>70–100</strong> — Easy. Most adults can read this comfortably.</div>
+        <div class="score-row"><div class="score-dot" style="background:#EF9F27"></div><strong>50–69</strong> — Fairly readable. Standard for most online writing.</div>
+        <div class="score-row"><div class="score-dot" style="background:#E24B4A"></div><strong>0–49</strong> — Difficult. Best suited for academic or technical audiences.</div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">
+        ☕ Buy me a coffee
+      </a>
+    </div>
+
+    <!--
+      AD SLOT — replace the div below with your Carbon Ads or Google AdSense snippet.
+      Carbon Ads: https://www.carbonads.net
+      Google AdSense: https://adsense.google.com
+    -->
+    <div class="ad-slot" id="ad-slot">
+      Advertisement
+    </div>
+
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free readability tool for writers, bloggers &amp; editors.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+  </footer>
+
+  <script>
+    function analyze() {
+      const text = document.getElementById('rt-input').value.trim();
+
+      if (!text) {
+        document.getElementById('s-time').textContent = '—';
+        document.getElementById('s-words').textContent = '—';
+        document.getElementById('s-sents').textContent = '—';
+        document.getElementById('s-wps').textContent = '—';
+        document.getElementById('grade-score').textContent = 'Paste text above to analyze';
+        document.getElementById('rt-fill').style.width = '0%';
+        document.getElementById('rt-badge').innerHTML = '';
+        return;
+      }
+
+      const words = text.match(/\b\w+\b/g) || [];
+      const wordCount = words.length;
+      const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 1);
+      const sentCount = Math.max(sentences.length, 1);
+      const syllables = words.reduce((acc, w) => acc + countSyllables(w), 0);
+
+      const wps = wordCount / sentCount;
+      const spw = syllables / Math.max(wordCount, 1);
+      const flesch = Math.max(0, Math.min(100, Math.round(206.835 - 1.015 * wps - 84.6 * spw)));
+
+      const readMin = Math.ceil(wordCount / 238);
+      const timeStr = readMin < 1 ? '< 1 min' : readMin === 1 ? '1 min' : readMin + ' min';
+
+      document.getElementById('s-time').textContent = timeStr;
+      document.getElementById('s-words').textContent = wordCount.toLocaleString();
+      document.getElementById('s-sents').textContent = sentCount.toLocaleString();
+      document.getElementById('s-wps').textContent = wps.toFixed(1);
+      document.getElementById('grade-score').textContent = 'Score: ' + flesch + ' / 100';
+
+      const fill = document.getElementById('rt-fill');
+      fill.style.width = flesch + '%';
+
+      let level, color, cls, icon;
+      if (flesch >= 70) {
+        level = 'Easy to read'; color = '#97C459'; cls = 'easy';
+        icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>';
+      } else if (flesch >= 50) {
+        level = 'Fairly readable'; color = '#EF9F27'; cls = 'medium';
+        icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+      } else {
+        level = 'Difficult to read'; color = '#E24B4A'; cls = 'hard';
+        icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+      }
+
+      fill.style.background = color;
+      document.getElementById('rt-badge').innerHTML =
+        '<span class="badge ' + cls + '">' + icon + level + '</span>';
+    }
+
+    function countSyllables(word) {
+      word = word.toLowerCase().replace(/[^a-z]/g, '');
+      if (!word) return 1;
+      if (word.length <= 3) return 1;
+      word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '').replace(/^y/, '');
+      const m = word.match(/[aeiouy]{1,2}/g);
+      return m ? m.length : 1;
+    }
+  </script>
+
+</body>
+</html>

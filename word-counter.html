@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word & Character Counter — Free Online Tool</title>
+  <meta name="description" content="Free online word and character counter. Instantly count words, characters, sentences, and paragraphs. Perfect for Twitter, essays, SEO, and more." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner {
+      max-width: 760px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; height: 56px;
+    }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); text-decoration: none; }
+    .header-links { display: flex; align-items: center; gap: 12px; }
+    .header-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .header-link:hover { color: var(--text); }
+    .header-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: var(--radius-md);
+      border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500;
+      color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s;
+    }
+    .header-cta:hover { background: var(--surface); }
+
+    /* ── Main ── */
+    main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+    .hero { margin-bottom: 2rem; }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 400; line-height: 1.15; margin-bottom: 10px;
+    }
+    .hero h1 em { font-style: italic; }
+    .hero p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 520px; }
+
+    /* ── Limits bar ── */
+    .limits {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
+    }
+    .limit-btn {
+      padding: 6px 14px; border-radius: 99px; font-size: 13px; font-weight: 500;
+      border: 1px solid var(--border-strong); background: transparent;
+      color: var(--text-secondary); cursor: pointer; transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .limit-btn:hover { background: var(--surface); color: var(--text); }
+    .limit-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .limit-label { font-size: 13px; color: var(--text-secondary); align-self: center; margin-right: 4px; }
+
+    /* ── Textarea ── */
+    .textarea-wrap { position: relative; }
+    textarea {
+      width: 100%; min-height: 220px; resize: vertical;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.65;
+      padding: 16px 18px; border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg); background: var(--bg); color: var(--text);
+      transition: border-color 0.15s; display: block;
+    }
+    textarea:focus { outline: none; border-color: var(--text-secondary); }
+    textarea::placeholder { color: var(--text-tertiary); }
+
+    .clear-btn {
+      position: absolute; top: 12px; right: 12px;
+      padding: 5px 12px; border-radius: var(--radius-md);
+      border: 1px solid var(--border); background: var(--surface);
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--text-secondary);
+      cursor: pointer; transition: all 0.15s; opacity: 0;
+    }
+    .clear-btn.visible { opacity: 1; }
+    .clear-btn:hover { color: var(--text); }
+
+    /* ── Progress bar (for limit mode) ── */
+    .progress-wrap { margin-top: 10px; display: none; }
+    .progress-wrap.visible { display: block; }
+    .progress-header { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+    .progress-header span.over { color: #E24B4A; font-weight: 500; }
+    .progress-track { height: 6px; background: var(--surface); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 99px; transition: width 0.2s, background 0.2s; background: #97C459; }
+
+    /* ── Stats ── */
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px; margin: 1.5rem 0;
+    }
+    .stat { background: var(--surface); border-radius: var(--radius-md); padding: 16px 18px; }
+    .stat-val { font-size: 24px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 5px; }
+    .stat-lbl { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Platform limits reference ── */
+    .platforms { margin: 1.5rem 0; }
+    .platforms h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .platform-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+    .platform-card {
+      background: var(--surface); border-radius: var(--radius-md); padding: 12px 14px;
+      cursor: pointer; transition: background 0.15s; border: 1px solid transparent;
+    }
+    .platform-card:hover { border-color: var(--border-strong); }
+    .platform-card.active { border-color: var(--text); }
+    .platform-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .platform-limit { font-size: 12px; color: var(--text-secondary); }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    .footer-cta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 20px; border-radius: var(--radius-md);
+      border: 1px solid var(--border-strong); font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 500; color: var(--text);
+      background: transparent; text-decoration: none; transition: background 0.15s;
+    }
+    .coffee-btn:hover { background: var(--surface); }
+
+    .ad-slot {
+      margin-top: 2rem; border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-md); padding: 1.5rem; text-align: center;
+      color: var(--text-tertiary); font-size: 12px; letter-spacing: 0.05em;
+      text-transform: uppercase; min-height: 100px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+
+    @media (max-width: 520px) {
+      main { padding: 2rem 1.25rem 3rem; }
+      header { padding: 0 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <div class="header-links">
+        <a class="header-link" href="https://readabletool.netlify.app">Readability checker</a>
+        <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Word & character<br><em>counter</em></h1>
+      <p>Paste or type any text to instantly count words, characters, sentences, and paragraphs. Set a limit to check against Twitter, essays, or SEO requirements.</p>
+    </div>
+
+    <div class="limits">
+      <span class="limit-label">Quick limits:</span>
+      <button class="limit-btn" onclick="setLimit(280)">Twitter/X (280)</button>
+      <button class="limit-btn" onclick="setLimit(160)">Meta description (160)</button>
+      <button class="limit-btn" onclick="setLimit(500)">Instagram (500)</button>
+      <button class="limit-btn" onclick="setLimit(650)">LinkedIn (650)</button>
+      <button class="limit-btn active-none" onclick="clearLimit()">None</button>
+    </div>
+
+    <div class="textarea-wrap">
+      <textarea id="wc-input" placeholder="Paste or type your text here…" oninput="analyze()" aria-label="Text to count"></textarea>
+      <button class="clear-btn" id="clear-btn" onclick="clearText()">Clear</button>
+    </div>
+
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-header">
+        <span id="progress-label">0 / 280 characters</span>
+        <span id="progress-pct"></span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="s-words">0</div><div class="stat-lbl">Words</div></div>
+      <div class="stat"><div class="stat-val" id="s-chars">0</div><div class="stat-lbl">Characters</div></div>
+      <div class="stat"><div class="stat-val" id="s-chars-no">0</div><div class="stat-lbl">Chars (no spaces)</div></div>
+      <div class="stat"><div class="stat-val" id="s-sents">0</div><div class="stat-lbl">Sentences</div></div>
+      <div class="stat"><div class="stat-val" id="s-paras">0</div><div class="stat-lbl">Paragraphs</div></div>
+      <div class="stat"><div class="stat-val" id="s-time">0 min</div><div class="stat-lbl">Read time</div></div>
+    </div>
+
+    <div class="platforms">
+      <h2>Platform character limits</h2>
+      <div class="platform-grid">
+        <div class="platform-card" onclick="setLimit(280)"><div class="platform-name">Twitter / X</div><div class="platform-limit">280 characters</div></div>
+        <div class="platform-card" onclick="setLimit(160)"><div class="platform-name">Meta description</div><div class="platform-limit">160 characters</div></div>
+        <div class="platform-card" onclick="setLimit(500)"><div class="platform-name">Instagram caption</div><div class="platform-limit">500 characters</div></div>
+        <div class="platform-card" onclick="setLimit(650)"><div class="platform-name">LinkedIn post</div><div class="platform-limit">650 characters (preview)</div></div>
+        <div class="platform-card" onclick="setLimit(100)"><div class="platform-name">SEO title tag</div><div class="platform-limit">60 characters</div></div>
+        <div class="platform-card" onclick="setLimit(5000)"><div class="platform-name">College essay</div><div class="platform-limit">650 words typical</div></div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <div class="ad-slot">Advertisement</div>
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free writing tools for bloggers, writers &amp; creators.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://readabletool.netlify.app" style="color: inherit;">Readability Checker</a>
+  </footer>
+
+  <script>
+    let activeLimit = null;
+
+    function setLimit(n) {
+      activeLimit = n;
+      document.querySelectorAll('.limit-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById('progress-wrap').classList.add('visible');
+      analyze();
+    }
+
+    function clearLimit() {
+      activeLimit = null;
+      document.querySelectorAll('.limit-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('active'));
+      document.getElementById('progress-wrap').classList.remove('visible');
+    }
+
+    function clearText() {
+      document.getElementById('wc-input').value = '';
+      document.getElementById('clear-btn').classList.remove('visible');
+      analyze();
+    }
+
+    function analyze() {
+      const text = document.getElementById('wc-input').value;
+      const trimmed = text.trim();
+
+      document.getElementById('clear-btn').classList.toggle('visible', text.length > 0);
+
+      const words = trimmed ? (trimmed.match(/\b\w+\b/g) || []).length : 0;
+      const chars = text.length;
+      const charsNoSpace = text.replace(/\s/g, '').length;
+      const sentences = trimmed ? text.split(/[.!?]+/).filter(s => s.trim().length > 1).length : 0;
+      const paras = trimmed ? text.split(/\n+/).filter(p => p.trim().length > 0).length : 0;
+      const readMin = words < 50 ? '< 1 min' : Math.ceil(words / 238) + ' min';
+
+      document.getElementById('s-words').textContent = words.toLocaleString();
+      document.getElementById('s-chars').textContent = chars.toLocaleString();
+      document.getElementById('s-chars-no').textContent = charsNoSpace.toLocaleString();
+      document.getElementById('s-sents').textContent = sentences.toLocaleString();
+      document.getElementById('s-paras').textContent = paras.toLocaleString();
+      document.getElementById('s-time').textContent = readMin;
+
+      if (activeLimit) {
+        const pct = Math.min((chars / activeLimit) * 100, 100);
+        const over = chars > activeLimit;
+        const fill = document.getElementById('progress-fill');
+        fill.style.width = pct + '%';
+        fill.style.background = over ? '#E24B4A' : pct > 85 ? '#EF9F27' : '#97C459';
+        const label = document.getElementById('progress-label');
+        label.textContent = chars.toLocaleString() + ' / ' + activeLimit.toLocaleString() + ' characters';
+        label.className = over ? 'over' : '';
+        document.getElementById('progress-pct').textContent = over ? (chars - activeLimit) + ' over limit' : (activeLimit - chars) + ' remaining';
+      }
+    }
+  </script>
+
+</body>
+</html>

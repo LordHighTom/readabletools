@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Freelance Hourly Rate Calculator — What Should I Charge?</title>
+  <meta name="description" content="Find out exactly what to charge as a freelancer. Free hourly rate calculator based on your income goal, expenses, hours, and vacation time. No sign-up needed." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); text-decoration: none; }
+    .header-links { display: flex; align-items: center; gap: 12px; }
+    .header-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .header-link:hover { color: var(--text); }
+    .header-cta { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .header-cta:hover { background: var(--surface); }
+
+    main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+    .hero { margin-bottom: 2rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 40px); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+    .hero h1 em { font-style: italic; }
+    .hero p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 520px; }
+
+    /* ── Form ── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem; }
+    @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+    .field-hint { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+    .input-prefix { position: relative; }
+    .input-prefix span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--text-tertiary); pointer-events: none; }
+    .input-prefix input { padding-left: 26px !important; }
+    input[type="number"] {
+      width: 100%; font-family: 'DM Sans', sans-serif; font-size: 15px;
+      padding: 10px 14px; border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md); background: var(--bg); color: var(--text);
+      transition: border-color 0.15s; -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    input[type="number"]:focus { outline: none; border-color: var(--text-secondary); }
+
+    /* ── Tax toggle ── */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--surface); border-radius: var(--radius-md); margin-bottom: 1.5rem; }
+    .toggle-label { font-size: 14px; font-weight: 500; }
+    .toggle-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--border-strong); border-radius: 99px; cursor: pointer; transition: background 0.2s; }
+    .toggle-slider:before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: transform 0.2s; }
+    .toggle input:checked + .toggle-slider { background: var(--text); }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
+
+    /* ── Result ── */
+    .result { margin: 1.5rem 0; background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; text-align: center; }
+    .result-rate { font-family: 'DM Serif Display', serif; font-size: 72px; line-height: 1; color: var(--text); margin-bottom: 8px; }
+    .result-label { font-size: 16px; color: var(--text-secondary); margin-bottom: 4px; }
+    .result-sub { font-size: 13px; color: var(--text-tertiary); }
+    .result-empty { font-size: 16px; color: var(--text-tertiary); font-style: italic; }
+
+    /* ── Breakdown ── */
+    .breakdown { margin: 1.5rem 0; }
+    .breakdown h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .breakdown-rows { display: flex; flex-direction: column; gap: 1px; }
+    .brow { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--surface); font-size: 14px; }
+    .brow:first-child { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+    .brow:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+    .brow.total { background: var(--text); color: var(--bg); font-weight: 500; border-radius: var(--radius-md) !important; margin-top: 8px; }
+    .brow-label { color: inherit; }
+    .brow-val { font-weight: 500; }
+    .brow .brow-label { color: var(--text-secondary); }
+    .brow.total .brow-label { color: var(--bg); opacity: 0.8; }
+
+    /* ── Rate comparison ── */
+    .comparison { margin: 1.5rem 0; }
+    .comparison h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    .comp-card { background: var(--surface); border-radius: var(--radius-md); padding: 14px 16px; }
+    .comp-name { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .comp-rate { font-size: 20px; font-weight: 500; }
+    .comp-note { font-size: 12px; color: var(--text-tertiary); margin-top: 3px; }
+
+    /* ── Tips ── */
+    .tips { margin: 1.5rem 0; padding: 1.25rem 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .tips h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .tip-list { display: flex; flex-direction: column; gap: 8px; }
+    .tip { font-size: 13px; color: var(--text-secondary); line-height: 1.5; display: flex; gap: 8px; }
+    .tip-icon { flex-shrink: 0; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    .footer-cta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .coffee-btn:hover { background: var(--surface); }
+
+    .ad-slot { margin-top: 2rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-tertiary); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+    footer a { color: inherit; }
+
+    @media (max-width: 520px) { main { padding: 2rem 1.25rem 3rem; } header { padding: 0 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <div class="header-links">
+        <a class="header-link" href="https://readabletools.com">All Tools</a>
+        
+        <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>What should you charge<br><em>as a freelancer?</em></h1>
+      <p>Enter your income goal, expenses, and working hours to find out exactly what hourly rate you need to charge to hit your target.</p>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label class="field-label" for="income">Desired annual income</label>
+        <div class="input-prefix">
+          <span>$</span>
+          <input type="number" id="income" value="60000" min="0" oninput="calculate()" aria-label="Desired annual income" />
+        </div>
+        <div class="field-hint">What you want to take home after expenses</div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="expenses">Annual business expenses</label>
+        <div class="input-prefix">
+          <span>$</span>
+          <input type="number" id="expenses" value="5000" min="0" oninput="calculate()" aria-label="Annual business expenses" />
+        </div>
+        <div class="field-hint">Software, equipment, subscriptions, etc.</div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="hours">Billable hours per week</label>
+        <input type="number" id="hours" value="30" min="1" max="80" oninput="calculate()" aria-label="Billable hours per week" />
+        <div class="field-hint">Hours you can actually bill clients (not total hours worked)</div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="weeks">Weeks off per year</label>
+        <input type="number" id="weeks" value="3" min="0" max="30" oninput="calculate()" aria-label="Weeks off per year" />
+        <div class="field-hint">Vacation, holidays, and sick days</div>
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Include self-employment tax buffer</div>
+        <div class="toggle-sub">Adds ~15% to cover US self-employment taxes</div>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="tax-toggle" checked onchange="calculate()" />
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-empty">Fill in your details above to calculate your rate</div>
+    </div>
+
+    <div class="breakdown" id="breakdown" style="display:none">
+      <h2>How we calculated this</h2>
+      <div class="breakdown-rows" id="breakdown-rows"></div>
+    </div>
+
+    <div class="comparison" id="comparison" style="display:none">
+      <h2>Your rate in perspective</h2>
+      <div class="comp-grid" id="comp-grid"></div>
+    </div>
+
+    <div class="tips">
+      <h2>Freelance rate tips</h2>
+      <div class="tip-list">
+        <div class="tip"><span class="tip-icon">💡</span><span>This is your <strong>minimum</strong> rate — always start higher to leave room for negotiation.</span></div>
+        <div class="tip"><span class="tip-icon">📈</span><span>Raise your rate by 10–15% every year. As your skills and reputation grow, so should your income.</span></div>
+        <div class="tip"><span class="tip-icon">🧾</span><span>Track billable hours carefully. Most freelancers overestimate how many hours they can actually bill.</span></div>
+        <div class="tip"><span class="tip-icon">🏖️</span><span>Always account for unpaid time: admin, marketing, and time between clients — typically 30–40% of your total hours.</span></div>
+        <div class="tip"><span class="tip-icon">💰</span><span>Set aside 25–30% of every payment for taxes if you're in the US. The self-employment tax alone is ~15%.</span></div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <div class="ad-slot">Advertisement</div>
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free tools for writers, bloggers &amp; freelancers.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://readabletool.netlify.app">Readability Checker</a>
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://quickwordcount.netlify.app">Word Counter</a>
+  </footer>
+
+  <script>
+    function fmt(n) {
+      return '$' + Math.round(n).toLocaleString();
+    }
+
+    function calculate() {
+      const income = parseFloat(document.getElementById('income').value) || 0;
+      const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+      const hoursPerWeek = parseFloat(document.getElementById('hours').value) || 1;
+      const weeksOff = parseFloat(document.getElementById('weeks').value) || 0;
+      const includeTax = document.getElementById('tax-toggle').checked;
+
+      const workingWeeks = 52 - weeksOff;
+      const totalBillableHours = hoursPerWeek * workingWeeks;
+      const totalNeeded = income + expenses;
+      const withTax = includeTax ? totalNeeded / (1 - 0.153) : totalNeeded;
+      const hourlyRate = withTax / totalBillableHours;
+
+      const result = document.getElementById('result');
+      result.innerHTML = `
+        <div class="result-rate">${fmt(hourlyRate)}<span style="font-size:28px;color:var(--text-secondary)">/hr</span></div>
+        <div class="result-label">minimum hourly rate to meet your goal</div>
+        <div class="result-sub">${totalBillableHours.toLocaleString()} billable hours · ${workingWeeks} working weeks per year</div>
+      `;
+
+      // breakdown
+      document.getElementById('breakdown').style.display = 'block';
+      const taxAmount = withTax - totalNeeded;
+      const rows = [
+        { label: 'Desired take-home income', val: fmt(income) },
+        { label: 'Annual business expenses', val: fmt(expenses) },
+        { label: 'Subtotal needed', val: fmt(totalNeeded) },
+        ...(includeTax ? [{ label: 'Self-employment tax buffer (15.3%)', val: fmt(taxAmount) }] : []),
+        { label: 'Total gross revenue needed', val: fmt(withTax) },
+        { label: 'Total billable hours per year', val: totalBillableHours.toLocaleString() + ' hrs' },
+      ];
+
+      document.getElementById('breakdown-rows').innerHTML = rows.map(r => `
+        <div class="brow"><span class="brow-label">${r.label}</span><span class="brow-val">${r.val}</span></div>
+      `).join('') + `
+        <div class="brow total"><span class="brow-label">Your minimum hourly rate</span><span class="brow-val">${fmt(hourlyRate)}/hr</span></div>
+      `;
+
+      // comparison cards
+      document.getElementById('comparison').style.display = 'block';
+      const daily = hourlyRate * hoursPerWeek / 5;
+      const weekly = hourlyRate * hoursPerWeek;
+      const monthly = (hourlyRate * hoursPerWeek * workingWeeks) / 12;
+      const project4h = hourlyRate * 4;
+      const project8h = hourlyRate * 8;
+      const project40h = hourlyRate * 40;
+
+      document.getElementById('comp-grid').innerHTML = [
+        { name: 'Per day (8hrs)', rate: fmt(hourlyRate * 8), note: 'Full day rate' },
+        { name: 'Per week', rate: fmt(weekly), note: hoursPerWeek + ' billable hours' },
+        { name: 'Per month', rate: fmt(monthly), note: 'Average monthly' },
+        { name: 'Small project', rate: fmt(project4h), note: '4 hours' },
+        { name: 'Medium project', rate: fmt(project8h), note: '8 hours' },
+        { name: 'Large project', rate: fmt(project40h), note: '40 hours' },
+      ].map(c => `
+        <div class="comp-card">
+          <div class="comp-name">${c.name}</div>
+          <div class="comp-rate">${c.rate}</div>
+          <div class="comp-note">${c.note}</div>
+        </div>
+      `).join('');
+    }
+
+    // calculate on load with default values
+    calculate();
+  </script>
+
+</body>
+</html>

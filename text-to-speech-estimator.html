@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text to Speech Estimator — Free Audio Length Calculator</title>
+  <meta name="description" content="Find out how long your text will take to read aloud. Free text to speech estimator calculates audio length for podcasts, videos, presentations, and more. No sign-up needed." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); text-decoration: none; }
+    .header-links { display: flex; align-items: center; gap: 12px; }
+    .header-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .header-link:hover { color: var(--text); }
+    .header-cta { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .header-cta:hover { background: var(--surface); }
+
+    main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+    .hero { margin-bottom: 2rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 40px); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+    .hero h1 em { font-style: italic; }
+    .hero p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 520px; }
+
+    /* ── Speed selector ── */
+    .speed-section { margin-bottom: 1.25rem; }
+    .speed-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; display: block; }
+    .speed-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+    .speed-btn { padding: 8px 18px; border-radius: 99px; font-size: 13px; font-weight: 500; border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+    .speed-btn:hover { background: var(--surface); color: var(--text); }
+    .speed-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+    textarea { width: 100%; min-height: 200px; resize: vertical; font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.65; padding: 16px 18px; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--bg); color: var(--text); transition: border-color 0.15s; display: block; }
+    textarea:focus { outline: none; border-color: var(--text-secondary); }
+    textarea::placeholder { color: var(--text-tertiary); }
+
+    /* ── Main time display ── */
+    .time-display { margin: 1.5rem 0; background: var(--surface); border-radius: var(--radius-lg); padding: 2rem; text-align: center; }
+    .time-value { font-family: 'DM Serif Display', serif; font-size: 64px; line-height: 1; color: var(--text); margin-bottom: 8px; }
+    .time-label { font-size: 16px; color: var(--text-secondary); margin-bottom: 4px; }
+    .time-wpm { font-size: 13px; color: var(--text-tertiary); }
+    .time-empty { font-size: 16px; color: var(--text-tertiary); font-style: italic; }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 1.5rem 0; }
+    .stat { background: var(--surface); border-radius: var(--radius-md); padding: 16px 18px; }
+    .stat-val { font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 5px; }
+    .stat-lbl { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Format cards ── */
+    .formats { margin: 1.5rem 0; }
+    .formats h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .format-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+    .format-card { background: var(--surface); border-radius: var(--radius-md); padding: 14px 16px; }
+    .format-icon { font-size: 20px; margin-bottom: 6px; }
+    .format-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .format-time { font-size: 13px; color: var(--text-secondary); }
+    .format-wpm { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+
+    /* ── Custom speed ── */
+    .custom-speed { margin: 1.5rem 0; padding: 1.25rem 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .custom-speed h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .slider-row { display: flex; align-items: center; gap: 14px; }
+    input[type="range"] { flex: 1; accent-color: var(--text); cursor: pointer; }
+    .slider-val { font-size: 15px; font-weight: 500; min-width: 80px; text-align: right; }
+    .slider-result { font-size: 13px; color: var(--text-secondary); margin-top: 8px; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    .footer-cta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .coffee-btn:hover { background: var(--surface); }
+
+    .ad-slot { margin-top: 2rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-tertiary); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+    footer a { color: inherit; }
+
+    @media (max-width: 520px) { main { padding: 2rem 1.25rem 3rem; } header { padding: 0 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <div class="header-links">
+        <a class="header-link" href="https://readabletools.com">All Tools</a>
+        
+        <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>How long will your<br><em>text take to say?</em></h1>
+      <p>Paste any text and instantly find out how long it will take to read aloud — for podcasts, videos, presentations, audiobooks, and more.</p>
+    </div>
+
+    <div class="speed-section">
+      <span class="speed-label">Speaking speed</span>
+      <div class="speed-btns">
+        <button class="speed-btn" onclick="setSpeed(110, this)">Slow (110 wpm)</button>
+        <button class="speed-btn active" onclick="setSpeed(150, this)">Average (150 wpm)</button>
+        <button class="speed-btn" onclick="setSpeed(180, this)">Conversational (180 wpm)</button>
+        <button class="speed-btn" onclick="setSpeed(210, this)">Fast (210 wpm)</button>
+      </div>
+    </div>
+
+    <textarea id="tts-input" placeholder="Paste your script, article, or speech here…" oninput="analyze()" aria-label="Text to estimate"></textarea>
+
+    <div class="time-display" id="time-display">
+      <div class="time-empty">Paste text above to estimate duration</div>
+    </div>
+
+    <div class="stats" id="stats-section" style="display:none">
+      <div class="stat"><div class="stat-val" id="s-words">—</div><div class="stat-lbl">Words</div></div>
+      <div class="stat"><div class="stat-val" id="s-chars">—</div><div class="stat-lbl">Characters</div></div>
+      <div class="stat"><div class="stat-val" id="s-sents">—</div><div class="stat-lbl">Sentences</div></div>
+      <div class="stat"><div class="stat-val" id="s-pages">—</div><div class="stat-lbl">Est. pages</div></div>
+    </div>
+
+    <div class="formats" id="formats-section" style="display:none">
+      <h2>Duration by format</h2>
+      <div class="format-grid" id="format-grid"></div>
+    </div>
+
+    <div class="custom-speed">
+      <h2>Custom speaking speed</h2>
+      <div class="slider-row">
+        <input type="range" id="custom-slider" min="80" max="300" value="150" oninput="updateCustom()" />
+        <span class="slider-val" id="custom-val">150 wpm</span>
+      </div>
+      <div class="slider-result" id="custom-result">Paste text above to see custom estimate</div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <div class="ad-slot">Advertisement</div>
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free writing tools for bloggers, writers &amp; creators.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://readabletool.netlify.app">Readability Checker</a>
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://quickwordcount.netlify.app">Word Counter</a>
+  </footer>
+
+  <script>
+    let currentWpm = 150;
+
+    const FORMATS = [
+      { icon: '🎙️', name: 'Podcast', wpm: 150 },
+      { icon: '🎬', name: 'YouTube video', wpm: 160 },
+      { icon: '📊', name: 'Presentation', wpm: 120 },
+      { icon: '📚', name: 'Audiobook', wpm: 155 },
+      { icon: '🗣️', name: 'Speech / talk', wpm: 130 },
+      { icon: '📺', name: 'News broadcast', wpm: 180 },
+    ];
+
+    function setSpeed(wpm, btn) {
+      currentWpm = wpm;
+      document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      analyze();
+    }
+
+    function formatTime(seconds) {
+      if (seconds < 60) return seconds + 's';
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      if (m < 60) return s > 0 ? `${m}m ${s}s` : `${m}m`;
+      const h = Math.floor(m / 60);
+      const rm = m % 60;
+      return rm > 0 ? `${h}h ${rm}m` : `${h}h`;
+    }
+
+    function calcSeconds(words, wpm) {
+      return Math.round((words / wpm) * 60);
+    }
+
+    function analyze() {
+      const text = document.getElementById('tts-input').value.trim();
+      const display = document.getElementById('time-display');
+
+      if (!text) {
+        display.innerHTML = '<div class="time-empty">Paste text above to estimate duration</div>';
+        document.getElementById('stats-section').style.display = 'none';
+        document.getElementById('formats-section').style.display = 'none';
+        document.getElementById('custom-result').textContent = 'Paste text above to see custom estimate';
+        return;
+      }
+
+      const words = (text.match(/\b\w+\b/g) || []).length;
+      const chars = text.length;
+      const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 1).length;
+      const pages = (words / 250).toFixed(1);
+      const secs = calcSeconds(words, currentWpm);
+      const time = formatTime(secs);
+
+      display.innerHTML = `
+        <div class="time-value">${time}</div>
+        <div class="time-label">estimated speaking time</div>
+        <div class="time-wpm">at ${currentWpm} words per minute · ${words.toLocaleString()} words</div>
+      `;
+
+      document.getElementById('stats-section').style.display = 'grid';
+      document.getElementById('s-words').textContent = words.toLocaleString();
+      document.getElementById('s-chars').textContent = chars.toLocaleString();
+      document.getElementById('s-sents').textContent = sentences.toLocaleString();
+      document.getElementById('s-pages').textContent = pages;
+
+      // format cards
+      document.getElementById('formats-section').style.display = 'block';
+      document.getElementById('format-grid').innerHTML = FORMATS.map(f => {
+        const s = calcSeconds(words, f.wpm);
+        return `
+          <div class="format-card">
+            <div class="format-icon">${f.icon}</div>
+            <div class="format-name">${f.name}</div>
+            <div class="format-time">${formatTime(s)}</div>
+            <div class="format-wpm">${f.wpm} wpm average</div>
+          </div>
+        `;
+      }).join('');
+
+      updateCustom();
+    }
+
+    function updateCustom() {
+      const wpm = parseInt(document.getElementById('custom-slider').value);
+      document.getElementById('custom-val').textContent = wpm + ' wpm';
+      const text = document.getElementById('tts-input').value.trim();
+      if (!text) { document.getElementById('custom-result').textContent = 'Paste text above to see custom estimate'; return; }
+      const words = (text.match(/\b\w+\b/g) || []).length;
+      const secs = calcSeconds(words, wpm);
+      document.getElementById('custom-result').textContent = `At ${wpm} wpm your text would take ${formatTime(secs)} to read aloud.`;
+    }
+  </script>
+
+</body>
+</html>

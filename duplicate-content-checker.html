@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Duplicate Content Checker — Free Text Similarity Tool</title>
+  <meta name="description" content="Compare two pieces of text and instantly see how similar they are. Free duplicate content checker highlights matching phrases and gives a similarity score. No sign-up needed." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); text-decoration: none; }
+    .header-links { display: flex; align-items: center; gap: 12px; }
+    .header-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .header-link:hover { color: var(--text); }
+    .header-cta { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .header-cta:hover { background: var(--surface); }
+
+    main { max-width: 900px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+    .hero { margin-bottom: 2rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 40px); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+    .hero h1 em { font-style: italic; }
+    .hero p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 560px; }
+
+    /* ── Text inputs ── */
+    .inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.25rem; }
+    @media (max-width: 620px) { .inputs { grid-template-columns: 1fr; } }
+    .input-group { display: flex; flex-direction: column; gap: 8px; }
+    .input-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+    textarea { width: 100%; min-height: 200px; resize: vertical; font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.65; padding: 14px 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--bg); color: var(--text); transition: border-color 0.15s; display: block; }
+    textarea:focus { outline: none; border-color: var(--text-secondary); }
+    textarea::placeholder { color: var(--text-tertiary); }
+
+    .compare-btn { display: block; width: 100%; padding: 13px; border-radius: var(--radius-md); border: none; background: var(--text); color: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; margin-bottom: 1.5rem; }
+    .compare-btn:hover { opacity: 0.85; }
+
+    /* ── Score display ── */
+    .score-display { display: flex; align-items: center; gap: 2rem; background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .score-circle { flex-shrink: 0; }
+    .score-circle svg { display: block; }
+    .score-info { flex: 1; min-width: 160px; }
+    .score-title { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 6px; }
+    .score-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+    .score-empty { font-size: 15px; color: var(--text-tertiary); font-style: italic; }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+    .stat { background: var(--surface); border-radius: var(--radius-md); padding: 16px 18px; }
+    .stat-val { font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 5px; }
+    .stat-lbl { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Highlighted outputs ── */
+    .outputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 1.5rem 0; }
+    @media (max-width: 620px) { .outputs { grid-template-columns: 1fr; } }
+    .output-panel { }
+    .output-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .output-text { font-size: 14px; line-height: 1.9; padding: 16px; background: var(--surface); border-radius: var(--radius-lg); min-height: 120px; }
+    .match { background: rgba(239, 159, 39, 0.3); border-radius: 3px; padding: 1px 2px; }
+    .match-strong { background: rgba(226, 75, 74, 0.25); border-radius: 3px; padding: 1px 2px; font-weight: 500; }
+
+    /* ── Matched phrases ── */
+    .phrases { margin: 1.5rem 0; }
+    .phrases h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .phrase-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--surface); border-radius: var(--radius-md); margin-bottom: 6px; }
+    .phrase-text { font-size: 14px; flex: 1; }
+    .phrase-len { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+    .no-matches { font-size: 14px; color: var(--text-tertiary); font-style: italic; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    .footer-cta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .coffee-btn:hover { background: var(--surface); }
+
+    .ad-slot { margin-top: 2rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-tertiary); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+    footer a { color: inherit; }
+
+    @media (max-width: 520px) { main { padding: 2rem 1.25rem 3rem; } header { padding: 0 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <div class="header-links">
+        <a class="header-link" href="https://readabletools.com">All Tools</a>
+        
+        <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Check for<br><em>duplicate content</em></h1>
+      <p>Paste two pieces of text to instantly see how similar they are. Highlights matching phrases and gives a similarity score — great for writers, teachers, and bloggers.</p>
+    </div>
+
+    <div class="inputs">
+      <div class="input-group">
+        <div class="input-label">Text A</div>
+        <textarea id="text-a" placeholder="Paste your original text here…" aria-label="Text A"></textarea>
+      </div>
+      <div class="input-group">
+        <div class="input-label">Text B</div>
+        <textarea id="text-b" placeholder="Paste the text to compare here…" aria-label="Text B"></textarea>
+      </div>
+    </div>
+
+    <button class="compare-btn" onclick="compare()">Compare texts</button>
+
+    <div class="score-display" id="score-display">
+      <div class="score-circle">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" fill="none" stroke="var(--border)" stroke-width="7"/>
+          <circle id="score-ring" cx="45" cy="45" r="38" fill="none" stroke="#ccc" stroke-width="7"
+            stroke-dasharray="239" stroke-dashoffset="239"
+            stroke-linecap="round" transform="rotate(-90 45 45)"
+            style="transition: stroke-dashoffset 0.5s cubic-bezier(.4,0,.2,1), stroke 0.5s"/>
+          <text id="score-num" x="45" y="50" text-anchor="middle" font-family="DM Serif Display,serif" font-size="20" fill="var(--text)">—</text>
+        </svg>
+      </div>
+      <div class="score-info">
+        <div id="score-title" class="score-empty">Paste two texts and click Compare</div>
+        <div id="score-desc" class="score-desc" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="stats" id="stats-section" style="display:none">
+      <div class="stat"><div class="stat-val" id="s-words-a">—</div><div class="stat-lbl">Words in A</div></div>
+      <div class="stat"><div class="stat-val" id="s-words-b">—</div><div class="stat-lbl">Words in B</div></div>
+      <div class="stat"><div class="stat-val" id="s-shared">—</div><div class="stat-lbl">Shared words</div></div>
+      <div class="stat"><div class="stat-val" id="s-phrases">—</div><div class="stat-lbl">Matching phrases</div></div>
+    </div>
+
+    <div class="outputs" id="outputs-section" style="display:none">
+      <div class="output-panel">
+        <div class="output-label">Text A — highlighted</div>
+        <div class="output-text" id="output-a"></div>
+      </div>
+      <div class="output-panel">
+        <div class="output-label">Text B — highlighted</div>
+        <div class="output-text" id="output-b"></div>
+      </div>
+    </div>
+
+    <div class="phrases" id="phrases-section" style="display:none">
+      <h2>Matching phrases found</h2>
+      <div id="phrases-list"></div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <div class="ad-slot">Advertisement</div>
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free writing tools for bloggers, writers &amp; creators.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://readabletool.netlify.app">Readability Checker</a>
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://quickwordcount.netlify.app">Word Counter</a>
+  </footer>
+
+  <script>
+    function tokenize(text) {
+      return text.toLowerCase().match(/\b[a-z']+\b/g) || [];
+    }
+
+    function getNgrams(tokens, n) {
+      const ngrams = new Set();
+      for (let i = 0; i <= tokens.length - n; i++) {
+        ngrams.add(tokens.slice(i, i + n).join(' '));
+      }
+      return ngrams;
+    }
+
+    function findMatchingPhrases(textA, textB, minLen = 4) {
+      const tokensA = tokenize(textA);
+      const tokensB = tokenize(textB);
+      const phrases = [];
+      const seen = new Set();
+
+      for (let len = Math.min(10, tokensA.length); len >= minLen; len--) {
+        const ngramsB = getNgrams(tokensB, len);
+        for (let i = 0; i <= tokensA.length - len; i++) {
+          const phrase = tokensA.slice(i, i + len).join(' ');
+          if (ngramsB.has(phrase) && !seen.has(phrase)) {
+            // check not already covered by longer phrase
+            let covered = false;
+            for (const p of seen) {
+              if (p.includes(phrase)) { covered = true; break; }
+            }
+            if (!covered) {
+              seen.add(phrase);
+              phrases.push({ phrase, len });
+            }
+          }
+        }
+      }
+      return phrases.sort((a, b) => b.len - a.len).slice(0, 20);
+    }
+
+    function highlightText(text, phrases) {
+      if (phrases.length === 0) return escapeHtml(text);
+      let result = escapeHtml(text);
+      const sorted = [...phrases].sort((a, b) => b.phrase.length - a.phrase.length);
+      for (const { phrase, len } of sorted) {
+        const escaped = escapeHtml(phrase);
+        const cls = len >= 6 ? 'match-strong' : 'match';
+        const regex = new RegExp('(?<![\\w>])' + escaped.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\w<])', 'gi');
+        result = result.replace(regex, m => `<span class="${cls}">${m}</span>`);
+      }
+      return result;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function compare() {
+      const textA = document.getElementById('text-a').value.trim();
+      const textB = document.getElementById('text-b').value.trim();
+
+      if (!textA || !textB) {
+        alert('Please paste text in both fields to compare.');
+        return;
+      }
+
+      const tokensA = tokenize(textA);
+      const tokensB = tokenize(textB);
+      const setA = new Set(tokensA);
+      const setB = new Set(tokensB);
+      const shared = [...setA].filter(w => setB.has(w)).length;
+
+      // Jaccard similarity on bigrams
+      const bigramsA = getNgrams(tokensA, 2);
+      const bigramsB = getNgrams(tokensB, 2);
+      const intersection = [...bigramsA].filter(g => bigramsB.has(g)).length;
+      const union = new Set([...bigramsA, ...bigramsB]).size;
+      const similarity = union > 0 ? Math.round((intersection / union) * 100) : 0;
+
+      const matchingPhrases = findMatchingPhrases(textA, textB);
+
+      // score ring
+      const circumference = 239;
+      const offset = circumference - (similarity / 100) * circumference;
+      document.getElementById('score-ring').style.strokeDashoffset = offset;
+      const color = similarity <= 20 ? '#97C459' : similarity <= 50 ? '#EF9F27' : '#E24B4A';
+      document.getElementById('score-ring').style.stroke = color;
+      document.getElementById('score-num').textContent = similarity + '%';
+
+      let title, desc;
+      if (similarity <= 10) { title = 'Very different'; desc = 'These texts share very little in common. No duplicate content concern.'; }
+      else if (similarity <= 20) { title = 'Mostly unique'; desc = 'Minor similarities, likely due to common words and phrases. No concern.'; }
+      else if (similarity <= 40) { title = 'Some similarity'; desc = 'Moderate overlap detected. Review highlighted phrases to check for duplication.'; }
+      else if (similarity <= 60) { title = 'Significant overlap'; desc = 'These texts share a lot of content. Consider rewriting the matching sections.'; }
+      else { title = 'Very similar'; desc = 'High similarity detected. These texts may be considered duplicate content by search engines.'; }
+
+      const titleEl = document.getElementById('score-title');
+      titleEl.textContent = title;
+      titleEl.className = 'score-title';
+      const descEl = document.getElementById('score-desc');
+      descEl.textContent = desc;
+      descEl.style.display = 'block';
+
+      // stats
+      document.getElementById('stats-section').style.display = 'grid';
+      document.getElementById('s-words-a').textContent = tokensA.length.toLocaleString();
+      document.getElementById('s-words-b').textContent = tokensB.length.toLocaleString();
+      document.getElementById('s-shared').textContent = shared.toLocaleString();
+      document.getElementById('s-phrases').textContent = matchingPhrases.length;
+
+      // highlighted outputs
+      document.getElementById('outputs-section').style.display = 'grid';
+      document.getElementById('output-a').innerHTML = highlightText(textA, matchingPhrases);
+      document.getElementById('output-b').innerHTML = highlightText(textB, matchingPhrases);
+
+      // phrase list
+      document.getElementById('phrases-section').style.display = 'block';
+      if (matchingPhrases.length > 0) {
+        document.getElementById('phrases-list').innerHTML = matchingPhrases.map(({ phrase, len }) => `
+          <div class="phrase-item">
+            <span class="phrase-text">"${phrase}"</span>
+            <span class="phrase-len">${len} words</span>
+          </div>
+        `).join('');
+      } else {
+        document.getElementById('phrases-list').innerHTML = '<div class="no-matches">No significant matching phrases found.</div>';
+      }
+    }
+  </script>
+
+</body>
+</html>

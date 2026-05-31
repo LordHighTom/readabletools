@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentence Length Analyzer — Free Writing Tool</title>
+  <meta name="description" content="Analyze the length and variety of your sentences instantly. Free sentence length analyzer helps writers improve flow, pacing, and readability. No sign-up needed." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --border: rgba(0,0,0,0.1);
+      --border-strong: rgba(0,0,0,0.18);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #18181a;
+        --surface: #232325;
+        --border: rgba(255,255,255,0.1);
+        --border-strong: rgba(255,255,255,0.18);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+      }
+    }
+
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+    .header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--text); text-decoration: none; }
+    .header-links { display: flex; align-items: center; gap: 12px; }
+    .header-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .header-link:hover { color: var(--text); }
+    .header-cta { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .header-cta:hover { background: var(--surface); }
+
+    main { max-width: 760px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+
+    .hero { margin-bottom: 2rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 5vw, 40px); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+    .hero h1 em { font-style: italic; }
+    .hero p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 520px; }
+
+    textarea { width: 100%; min-height: 200px; resize: vertical; font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.65; padding: 16px 18px; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--bg); color: var(--text); transition: border-color 0.15s; display: block; }
+    textarea:focus { outline: none; border-color: var(--text-secondary); }
+    textarea::placeholder { color: var(--text-tertiary); }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 1.5rem 0; }
+    .stat { background: var(--surface); border-radius: var(--radius-md); padding: 16px 18px; }
+    .stat-val { font-size: 22px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 5px; }
+    .stat-lbl { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── Variety meter ── */
+    .variety { margin: 1.5rem 0; }
+    .variety-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .variety-title { font-size: 15px; font-weight: 500; }
+    .variety-score { font-size: 13px; color: var(--text-secondary); }
+    .track { height: 8px; background: var(--surface); border-radius: 99px; overflow: hidden; }
+    .fill { height: 100%; border-radius: 99px; transition: width 0.4s cubic-bezier(.4,0,.2,1), background 0.4s; }
+    .variety-tip { font-size: 13px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; }
+
+    /* ── Sentence breakdown ── */
+    .breakdown { margin: 1.5rem 0; }
+    .breakdown h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .breakdown-bars { display: flex; flex-direction: column; gap: 8px; }
+    .breakdown-row { display: flex; align-items: center; gap: 12px; }
+    .breakdown-label { font-size: 13px; color: var(--text-secondary); width: 90px; flex-shrink: 0; }
+    .breakdown-track { flex: 1; height: 8px; background: var(--surface); border-radius: 99px; overflow: hidden; }
+    .breakdown-fill { height: 100%; border-radius: 99px; transition: width 0.4s cubic-bezier(.4,0,.2,1); }
+    .breakdown-count { font-size: 13px; color: var(--text-secondary); width: 40px; text-align: right; flex-shrink: 0; }
+
+    /* ── Sentence visualizer ── */
+    .visualizer { margin: 1.5rem 0; }
+    .visualizer h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .vis-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+    .vis-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+    .vis-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .vis-bars { display: flex; align-items: flex-end; gap: 3px; height: 60px; flex-wrap: wrap; }
+    .vis-bar { width: 14px; border-radius: 3px 3px 0 0; flex-shrink: 0; cursor: default; transition: opacity 0.15s; min-height: 4px; }
+    .vis-bar:hover { opacity: 0.75; }
+
+    /* ── Highlighted text ── */
+    .highlighted { margin: 1.5rem 0; }
+    .highlighted h2 { font-size: 14px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .hl-text { font-size: 15px; line-height: 2; }
+    .hl-sent { border-radius: 3px; padding: 1px 2px; }
+    .hl-sent.short  { background: rgba(151, 196, 89, 0.25); }
+    .hl-sent.medium { background: rgba(181, 212, 244, 0.35); }
+    .hl-sent.long   { background: rgba(239, 159, 39, 0.25); }
+    .hl-sent.vlong  { background: rgba(226, 75, 74, 0.2); }
+
+    .empty-state { font-size: 14px; color: var(--text-tertiary); font-style: italic; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+    .footer-cta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .footer-cta p { font-size: 13px; color: var(--text-secondary); }
+    .coffee-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s; }
+    .coffee-btn:hover { background: var(--surface); }
+
+    .ad-slot { margin-top: 2rem; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-tertiary); font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; min-height: 100px; display: flex; align-items: center; justify-content: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; font-size: 13px; color: var(--text-tertiary); }
+    footer a { color: inherit; }
+
+    @media (max-width: 520px) { main { padding: 2rem 1.25rem 3rem; } header { padding: 0 1.25rem; } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="https://readabletools.com">Readable Tools</a>
+      <div class="header-links">
+        <a class="header-link" href="https://readabletools.com">All Tools</a>
+        
+        <a class="header-cta" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Analyze your<br><em>sentence lengths</em></h1>
+      <p>Paste any text to see how varied your sentence lengths are. Good writing mixes short and long sentences for rhythm and flow.</p>
+    </div>
+
+    <textarea id="sl-input" placeholder="Paste your text here…" oninput="analyze()" aria-label="Text to analyze"></textarea>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="s-total">—</div><div class="stat-lbl">Sentences</div></div>
+      <div class="stat"><div class="stat-val" id="s-avg">—</div><div class="stat-lbl">Avg length</div></div>
+      <div class="stat"><div class="stat-val" id="s-shortest">—</div><div class="stat-lbl">Shortest</div></div>
+      <div class="stat"><div class="stat-val" id="s-longest">—</div><div class="stat-lbl">Longest</div></div>
+    </div>
+
+    <div class="variety">
+      <div class="variety-header">
+        <span class="variety-title">Sentence variety score</span>
+        <span class="variety-score" id="variety-score">Paste text to analyze</span>
+      </div>
+      <div class="track"><div class="fill" id="variety-fill" style="width:0%"></div></div>
+      <div class="variety-tip" id="variety-tip"></div>
+    </div>
+
+    <div class="breakdown">
+      <h2>Sentence breakdown</h2>
+      <div class="breakdown-bars" id="breakdown-bars">
+        <div class="empty-state">Paste text above to see breakdown</div>
+      </div>
+    </div>
+
+    <div class="visualizer" id="vis-section" style="display:none">
+      <h2>Sentence length visualizer</h2>
+      <div class="vis-legend">
+        <div class="vis-legend-item"><div class="vis-dot" style="background:#97C459"></div>Short (1–8 words)</div>
+        <div class="vis-legend-item"><div class="vis-dot" style="background:#B5D4F4"></div>Medium (9–18 words)</div>
+        <div class="vis-legend-item"><div class="vis-dot" style="background:#EF9F27"></div>Long (19–30 words)</div>
+        <div class="vis-legend-item"><div class="vis-dot" style="background:#E24B4A"></div>Very long (30+ words)</div>
+      </div>
+      <div class="vis-bars" id="vis-bars"></div>
+    </div>
+
+    <div class="highlighted" id="hl-section" style="display:none">
+      <h2>Highlighted text</h2>
+      <div class="hl-text" id="hl-text"></div>
+    </div>
+
+    <hr />
+
+    <div class="footer-cta">
+      <p>Free forever. No account needed. No data stored.</p>
+      <a class="coffee-btn" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+    </div>
+
+    <div class="ad-slot">Advertisement</div>
+  </main>
+
+  <footer>
+    &copy; 2026 Readable. Free writing tools for bloggers, writers &amp; creators.copy; 2026 <a href="https://readabletools.com" style="color:inherit">Readable Tools</a>. Free writing tools for bloggers, writers &amp; creators.
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://readabletool.netlify.app">Readability Checker</a>
+    <span style="margin: 0 8px;">·</span>
+    <a href="https://quickwordcount.netlify.app">Word Counter</a>
+  </footer>
+
+  <script>
+    function getSentences(text) {
+      return text.split(/(?<=[.!?])\s+(?=[A-Z"'])|(?<=[.!?])$/).map(s => s.trim()).filter(s => s.length > 1 && s.match(/\w/));
+    }
+
+    function wordCount(sentence) {
+      return (sentence.match(/\b\w+\b/g) || []).length;
+    }
+
+    function classify(wc) {
+      if (wc <= 8)  return 'short';
+      if (wc <= 18) return 'medium';
+      if (wc <= 30) return 'long';
+      return 'vlong';
+    }
+
+    function analyze() {
+      const text = document.getElementById('sl-input').value.trim();
+
+      if (!text) {
+        document.getElementById('s-total').textContent = '—';
+        document.getElementById('s-avg').textContent = '—';
+        document.getElementById('s-shortest').textContent = '—';
+        document.getElementById('s-longest').textContent = '—';
+        document.getElementById('variety-score').textContent = 'Paste text to analyze';
+        document.getElementById('variety-fill').style.width = '0%';
+        document.getElementById('variety-tip').textContent = '';
+        document.getElementById('breakdown-bars').innerHTML = '<div class="empty-state">Paste text above to see breakdown</div>';
+        document.getElementById('vis-section').style.display = 'none';
+        document.getElementById('hl-section').style.display = 'none';
+        return;
+      }
+
+      const sentences = getSentences(text);
+      if (sentences.length === 0) return;
+
+      const lengths = sentences.map(wordCount);
+      const total = sentences.length;
+      const avg = lengths.reduce((a, b) => a + b, 0) / total;
+      const shortest = Math.min(...lengths);
+      const longest = Math.max(...lengths);
+
+      document.getElementById('s-total').textContent = total;
+      document.getElementById('s-avg').textContent = avg.toFixed(1) + ' words';
+      document.getElementById('s-shortest').textContent = shortest + ' words';
+      document.getElementById('s-longest').textContent = longest + ' words';
+
+      // variety: standard deviation relative to mean
+      const variance = lengths.reduce((acc, l) => acc + Math.pow(l - avg, 2), 0) / total;
+      const stdDev = Math.sqrt(variance);
+      const cv = stdDev / avg; // coefficient of variation
+      const varietyScore = Math.min(100, Math.round(cv * 150));
+
+      const fill = document.getElementById('variety-fill');
+      fill.style.width = varietyScore + '%';
+      fill.style.background = varietyScore >= 60 ? '#97C459' : varietyScore >= 35 ? '#EF9F27' : '#E24B4A';
+      document.getElementById('variety-score').textContent = 'Score: ' + varietyScore + ' / 100';
+
+      let tip = '';
+      if (varietyScore >= 60) tip = 'Great variety! Your sentences have a good mix of lengths, which creates natural rhythm and keeps readers engaged.';
+      else if (varietyScore >= 35) tip = 'Decent variety. Try mixing in more short, punchy sentences or longer flowing ones to improve rhythm.';
+      else tip = 'Low variety — most sentences are a similar length. Try adding some very short sentences for impact, or combining ideas into longer ones.';
+      document.getElementById('variety-tip').textContent = tip;
+
+      // breakdown
+      const counts = { short: 0, medium: 0, long: 0, vlong: 0 };
+      lengths.forEach(l => counts[classify(l)]++);
+      const maxCount = Math.max(...Object.values(counts));
+      const colors = { short: '#97C459', medium: '#B5D4F4', long: '#EF9F27', vlong: '#E24B4A' };
+      const labels = { short: 'Short (1–8)', medium: 'Medium (9–18)', long: 'Long (19–30)', vlong: 'Very long (30+)' };
+
+      document.getElementById('breakdown-bars').innerHTML = Object.entries(counts).map(([type, count]) => `
+        <div class="breakdown-row">
+          <span class="breakdown-label">${labels[type]}</span>
+          <div class="breakdown-track"><div class="breakdown-fill" style="width:${maxCount > 0 ? (count/maxCount)*100 : 0}%;background:${colors[type]}"></div></div>
+          <span class="breakdown-count">${count}</span>
+        </div>
+      `).join('');
+
+      // visualizer bars
+      document.getElementById('vis-section').style.display = 'block';
+      const maxLen = Math.max(...lengths);
+      document.getElementById('vis-bars').innerHTML = lengths.slice(0, 80).map((l, i) => {
+        const cls = classify(l);
+        const colorMap = { short: '#97C459', medium: '#B5D4F4', long: '#EF9F27', vlong: '#E24B4A' };
+        const h = Math.max(4, Math.round((l / maxLen) * 56));
+        return `<div class="vis-bar" style="height:${h}px;background:${colorMap[cls]}" title="Sentence ${i+1}: ${l} words"></div>`;
+      }).join('');
+
+      // highlighted text
+      document.getElementById('hl-section').style.display = 'block';
+      document.getElementById('hl-text').innerHTML = sentences.map(s => {
+        const wc = wordCount(s);
+        const cls = classify(wc);
+        return `<span class="hl-sent ${cls}" title="${wc} words">${s} </span>`;
+      }).join('');
+    }
+  </script>
+
+</body>
+</html>
