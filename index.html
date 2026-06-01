@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Readable Tools — Free Writing Tools for Bloggers & Writers</title>
+  <meta name="description" content="11 free writing tools for bloggers, writers, and content creators. Check readability, count words, analyze headlines, detect passive voice, and more. No sign-up needed." />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7PQM1PF0P1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7PQM1PF0P1');
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --surface: #f2f0ec;
+      --surface-2: #eae8e3;
+      --border: rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.15);
+      --text: #1a1917;
+      --text-secondary: #6b6860;
+      --text-tertiary: #a09e9a;
+      --accent: #2D6A2D;
+      --accent-light: #EAF3DE;
+      --radius-md: 8px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141412;
+        --surface: #1e1d1b;
+        --surface-2: #252420;
+        --border: rgba(255,255,255,0.07);
+        --border-strong: rgba(255,255,255,0.13);
+        --text: #f0ede8;
+        --text-secondary: #9e9b96;
+        --text-tertiary: #5e5c58;
+        --accent: #7DC67D;
+        --accent-light: rgba(125,198,125,0.12);
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Header ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(250,249,247,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0 2rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      header { background: rgba(20,20,18,0.92); }
+    }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 58px; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .nav-link { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .nav-link:hover { color: var(--text); }
+    .coffee-btn-sm {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: var(--radius-md);
+      border: 1px solid var(--border-strong); font-size: 13px; font-weight: 500;
+      color: var(--text); background: transparent; text-decoration: none; transition: background 0.15s;
+    }
+    .coffee-btn-sm:hover { background: var(--surface); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 1100px; margin: 0 auto;
+      padding: 6rem 2rem 4rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    @media (max-width: 760px) { .hero { grid-template-columns: 1fr; padding: 3rem 1.5rem 2rem; gap: 2rem; } }
+
+    .hero-text { }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 99px; background: var(--accent-light); color: var(--accent); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1.25rem; }
+    .hero-eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 400; line-height: 1.1; margin-bottom: 1.25rem; }
+    .hero h1 em { font-style: italic; }
+    .hero-desc { font-size: 17px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 2rem; max-width: 440px; }
+    .hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: var(--radius-md); background: var(--text); color: var(--bg); font-size: 14px; font-weight: 500; text-decoration: none; transition: opacity 0.15s; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: var(--radius-md); border: 1px solid var(--border-strong); color: var(--text); font-size: 14px; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+    .btn-ghost:hover { background: var(--surface); }
+
+    /* ── Hero visual ── */
+    .hero-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mini-card { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; }
+    .mini-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .mini-card:nth-child(1) { grid-column: span 2; }
+    .mini-icon { font-size: 20px; margin-bottom: 8px; }
+    .mini-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .mini-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; margin-top: 10px; }
+    .mini-bar-fill { height: 100%; border-radius: 99px; }
+    .mini-score { font-family: 'DM Serif Display', serif; font-size: 28px; margin-bottom: 2px; }
+    .mini-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* ── Stats strip ── */
+    .stats-strip { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem 2rem; }
+    .stats-strip-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap; }
+    .strip-stat { text-align: center; }
+    .strip-val { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); }
+    .strip-lbl { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* ── Tools grid ── */
+    .tools-section { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem; }
+    .section-header { margin-bottom: 2rem; }
+    .section-title { font-family: 'DM Serif Display', serif; font-size: 32px; font-weight: 400; margin-bottom: 8px; }
+    .section-title em { font-style: italic; }
+    .section-desc { font-size: 15px; color: var(--text-secondary); }
+
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+
+    .tool-card {
+      display: flex; flex-direction: column;
+      background: var(--surface); border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.5rem; text-decoration: none; color: var(--text);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .tool-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 60%, var(--border) 100%); opacity: 0; transition: opacity 0.2s; }
+    .tool-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); border-color: var(--border-strong); }
+    .tool-card:hover::before { opacity: 1; }
+
+    .tool-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .tool-icon { width: 42px; height: 42px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .tool-arrow { font-size: 18px; color: var(--text-tertiary); transition: transform 0.2s, color 0.2s; }
+    .tool-card:hover .tool-arrow { transform: translate(2px, -2px); color: var(--text); }
+
+    .tool-name { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+    .tool-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; flex: 1; }
+    .tool-tag { display: inline-block; margin-top: 14px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; background: var(--surface-2); color: var(--text-tertiary); }
+
+    /* ── CTA section ── */
+    .cta-section { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 5rem; }
+    .cta-card { background: var(--surface); border-radius: var(--radius-xl); border: 1px solid var(--border); padding: 3rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .cta-text h2 { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; margin-bottom: 8px; }
+    .cta-text h2 em { font-style: italic; }
+    .cta-text p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; max-width: 420px; }
+    .cta-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ── Footer ── */
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 1rem; }
+    .footer-links a { font-size: 13px; color: var(--text-secondary); text-decoration: none; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 12px; color: var(--text-tertiary); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-text { animation: fadeUp 0.6s ease both; }
+    .hero-visual { animation: fadeUp 0.6s 0.15s ease both; }
+    .tool-card { animation: fadeUp 0.5s ease both; }
+
+    @media (max-width: 520px) {
+      .tools-grid { grid-template-columns: 1fr; }
+      .stats-strip-inner { gap: 2rem; }
+      .cta-card { padding: 2rem; }
+      header { padding: 0 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="/"><div class="logo-dot"></div>Readable Tools</a>
+      <div class="header-right">
+        <a class="nav-link" href="#tools">All tools</a>
+        <a class="coffee-btn-sm" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Support</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section>
+    <div class="hero">
+      <div class="hero-text">
+        <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Free writing tools</div>
+        <h1>Write clearer.<br>Rank <em>higher.</em><br>Sound better.</h1>
+        <p class="hero-desc">11 free tools for bloggers, writers, and content creators. No sign-up. No paywalls. Just tools that work.</p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#tools">Browse all tools →</a>
+          <a class="btn-ghost" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="mini-card">
+          <div class="mini-icon">📖</div>
+          <div class="mini-title">Readability Score</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-top:8px;">
+            <div class="mini-score" style="color:#97C459">74</div>
+            <div class="mini-label">Easy to read</div>
+          </div>
+          <div class="mini-bar"><div class="mini-bar-fill" style="width:74%;background:#97C459"></div></div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-icon">✍️</div>
+          <div class="mini-title">Word Count</div>
+          <div class="mini-score" style="margin-top:8px">1,842</div>
+          <div class="mini-label">words</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-icon">🎓</div>
+          <div class="mini-title">Grade Level</div>
+          <div class="mini-score" style="margin-top:8px">8th</div>
+          <div class="mini-label">grade</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Stats strip ── -->
+  <div class="stats-strip">
+    <div class="stats-strip-inner">
+      <div class="strip-stat"><div class="strip-val">11</div><div class="strip-lbl">Free tools</div></div>
+      <div class="strip-stat"><div class="strip-val">0</div><div class="strip-lbl">Sign-ups required</div></div>
+      <div class="strip-stat"><div class="strip-val">0</div><div class="strip-lbl">Data stored</div></div>
+      <div class="strip-stat"><div class="strip-val">∞</div><div class="strip-lbl">Free forever</div></div>
+    </div>
+  </div>
+
+  <!-- ── Tools grid ── -->
+  <section class="tools-section" id="tools">
+    <div class="section-header">
+      <h2 class="section-title">All <em>11 tools</em></h2>
+      <p class="section-desc">Click any tool to get started — everything works instantly in your browser.</p>
+    </div>
+
+    <div class="tools-grid">
+
+      <a class="tool-card" href="https://readabletool.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.05s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#EAF3DE">📖</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Readability Checker</div>
+        <div class="tool-desc">Get an instant Flesch readability score, reading time, and word stats for any text.</div>
+        <span class="tool-tag">Readability</span>
+      </a>
+
+      <a class="tool-card" href="https://quickwordcount.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.1s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#E8F0FD">✍️</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Word & Character Counter</div>
+        <div class="tool-desc">Count words, characters, sentences, and paragraphs. Includes Twitter, SEO, and platform limits.</div>
+        <span class="tool-tag">Writing</span>
+      </a>
+
+      <a class="tool-card" href="https://textgrader.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.15s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#FFF3E0">🎓</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Reading Level Checker</div>
+        <div class="tool-desc">Find out what US school grade level your writing is at using Flesch-Kincaid and Gunning Fog formulas.</div>
+        <span class="tool-tag">Readability</span>
+      </a>
+
+      <a class="tool-card" href="https://headlinescorer.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.2s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#FCEBEB">🎯</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Headline Analyzer</div>
+        <div class="tool-desc">Score your blog post headlines. Checks word balance, power words, length, sentiment, and SEO.</div>
+        <span class="tool-tag">SEO</span>
+      </a>
+
+      <a class="tool-card" href="https://keywordchecker.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.25s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#F3E8FD">🔍</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Keyword Density Checker</div>
+        <div class="tool-desc">Track keyword frequency and density in your content. Ideal range highlighted for SEO writers.</div>
+        <span class="tool-tag">SEO</span>
+      </a>
+
+      <a class="tool-card" href="https://sentenceanalyzer.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.3s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#E8F0FD">📊</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Sentence Length Analyzer</div>
+        <div class="tool-desc">Visualize your sentence lengths and get a variety score. Good writing mixes short and long sentences.</div>
+        <span class="tool-tag">Writing</span>
+      </a>
+
+      <a class="tool-card" href="https://passivevoicecheck.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.35s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#FAEEDA">✏️</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Passive Voice Detector</div>
+        <div class="tool-desc">Highlights every passive sentence in your writing and shows you how to make it more direct.</div>
+        <span class="tool-tag">Writing</span>
+      </a>
+
+      <a class="tool-card" href="https://duplicatetextcheck.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.4s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#EAF3DE">🔎</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Duplicate Content Checker</div>
+        <div class="tool-desc">Compare two texts side by side and see how similar they are. Highlights matching phrases.</div>
+        <span class="tool-tag">Writing</span>
+      </a>
+
+      <a class="tool-card" href="https://texttospeechestimator.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.45s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#FCEBEB">🎙️</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Text to Speech Estimator</div>
+        <div class="tool-desc">Find out how long your text takes to read aloud. Perfect for podcasts, videos, and presentations.</div>
+        <span class="tool-tag">Audio</span>
+      </a>
+
+      <a class="tool-card" href="https://blogposttitlegenerator.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.5s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#FFF3E0">💡</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Blog Post Title Generator</div>
+        <div class="tool-desc">Generate dozens of proven headline ideas for any topic — listicles, how-tos, questions, and more.</div>
+        <span class="tool-tag">Blogging</span>
+      </a>
+
+      <a class="tool-card" href="https://freelanceratecalculation.netlify.app" target="_blank" rel="noopener" style="animation-delay:0.55s">
+        <div class="tool-card-top">
+          <div class="tool-icon" style="background:#EAF3DE">💰</div>
+          <span class="tool-arrow">↗</span>
+        </div>
+        <div class="tool-name">Freelance Rate Calculator</div>
+        <div class="tool-desc">Calculate exactly what hourly rate to charge based on your income goal, expenses, and hours.</div>
+        <span class="tool-tag">Freelance</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <div class="cta-text">
+        <h2>All tools are <em>free forever</em></h2>
+        <p>No sign-up, no paywalls, no data stored. If these tools save you time, a coffee keeps them running.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn-primary" href="https://buymeacoffee.com/tpwallingf" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+        <a class="btn-ghost" href="#tools">Browse tools</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="https://readabletool.netlify.app">Readability Checker</a>
+        <a href="https://quickwordcount.netlify.app">Word Counter</a>
+        <a href="https://textgrader.netlify.app">Reading Level</a>
+        <a href="https://headlinescorer.netlify.app">Headline Analyzer</a>
+        <a href="https://keywordchecker.netlify.app">Keyword Density</a>
+        <a href="https://sentenceanalyzer.netlify.app">Sentence Analyzer</a>
+        <a href="https://passivevoicecheck.netlify.app">Passive Voice</a>
+        <a href="https://duplicatetextcheck.netlify.app">Duplicate Checker</a>
+        <a href="https://texttospeechestimator.netlify.app">TTS Estimator</a>
+        <a href="https://blogposttitlegenerator.netlify.app">Title Generator</a>
+        <a href="https://freelanceratecalculation.netlify.app">Rate Calculator</a>
+      </div>
+      <div class="footer-copy">&copy; 2026 Readable Tools · Free writing tools for bloggers, writers &amp; creators</div>
+    </div>
+  </footer>
+
+</body>
+</html>
